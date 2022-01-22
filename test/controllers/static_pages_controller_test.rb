@@ -2,6 +2,10 @@ require 'test_helper'
 
 class StaticPagesControllerTest < ActionDispatch::IntegrationTest
 
+  def setup
+    @base_title = "Ruby on Rails Tutorial Sample App"
+  end
+
   test "should get home" do  #Homeページのテスト。
     get static_pages_home_url  #GETリクエストをhomeアクションに対して発行 (=送信) せよ。
     assert_response :success  #そうすれば、リクエストに対するレスポンスは[成功]になるはず
