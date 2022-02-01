@@ -1,0 +1,56 @@
+Railsコンソールでも、メソッドを定義することができる。
+
+例えば引数を1つ取り、引数が空かどうかに基づいたメッセージを返すstring_messageというメソッドを定義してみる。
+>> def string_message(str = '')
+>>   if str.empty?
+>>     "It's an empty string!"
+>>   else
+>>     "The string is nonempty."
+>>   end
+>> end
+=> :string_message
+>> puts string_message("foobar")
+The string is nonempty.
+>> puts string_message("")
+It's an empty string!
+>> puts string_message
+It's an empty string!
+
+最後の例を見ると分かるように、メソッドの引数をカッコですら省略することも可能。
+def string_message(str = '') は、引数にデフォルト値を含めているから。
+このように指定すると、str変数に引数を渡すことも渡さないこともできる。
+引数を渡さない場合は、指定のデフォルト値が自動的に使われる。
+
+※注意
+　Rubyのメソッドには「暗黙の戻り値がある」
+　これは、メソッド内で最後に評価された式の値が自動的に返されることを意味する。 (訳注: メソッドで戻り値を明示的に指定しなかった場合の動作）
+　この場合、引数のstrが空かどうかに応じて、2つのメッセージ文字列のうちのいずれかを返す。
+　Rubyでは戻り値を明示的に指定することもできる。
+　
+次のメソッドは上のメソッドと同じ結果を返す。　
+>> def string_message(str = '')
+>>   return "It's an empty string!" if str.empty?
+>>   return "The string is nonempty."
+>> end　
+　
+2番目のreturnは実はなくてもいい。
+メソッド内の最後に置かれた式は、returnキーワードがなくても暗黙で値を返すため。
+ここでは、両方にreturnを使う方が見た目の対称性が保たれるので好ましいと言える。
+
+
+メソッドで引数の変数名にどんな名前を使っても、メソッドの呼び出し側には何の影響も生じない。
+最初の例のstrを別の変数名 (the_function_argumentなど) に変更しても、メソッドの呼び出し方は全く同じ。
+>> def string_message(the_function_argument = '')
+>>   if the_function_argument.empty?
+>>     "It's an empty string!"
+>>   else
+>>     "The string is nonempty."
+>>   end
+>> end
+=> :string_message
+>> puts string_message("")
+It's an empty string!
+>> puts string_message("foobar")
+The string is nonempty.
+
+
