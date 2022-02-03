@@ -54,3 +54,28 @@ It's an empty string!
 The string is nonempty.
 
 
+[演習]
+1. （コードを書き込む）の部分を適切なコードに置き換え、回文かどうかをチェックするメソッドを定義してみる。
+ >> def palindrome_tester(s)
+ >>   if （コードを書き込む）→　s == s.reverse
+ >>     puts "It's a palindrome!"
+ >>   else
+ >>     puts "It's not a palindrome."
+ >>   end
+ >> end
+
+2. 上で定義したメソッドを使って “racecar” と “onomatopoeia” が回文かどうかを確かめてみる。
+   １つ目は回文である、２つ目は回文でない、という結果になれば成功。
+  > puts palindrome_tester("racecar")
+  It's a palindrome!
+  
+  > puts palindrome_tester("onomatopoeia")
+  It's not a palindrome.
+
+3. palindrome_tester("racecar")に対してnil?メソッドを呼び出し、戻り値がnilであるかどうかを確認してみる。
+　 (つまりnil?を呼び出した結果がtrueであることを確認。)
+　 このメソッドチェーンは、nil?メソッドが def palindrome_tester(s) ~… end の戻り値を受け取り、その結果を返しているという意味になる。
+　> puts palindrome_tester("racecar").nil?
+  It's a palindrome!
+  true
+  
