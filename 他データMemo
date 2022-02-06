@@ -129,3 +129,40 @@ NoMethodError: undefined method `to_a' for 9:Integer
 字列に対しても範囲オブジェクトが使える。
 >> ('a'..'e').to_a
 => ["a", "b", "c", "d", "e"]
+
+
+[演習]
+1. 文字列「A man, a plan, a canal, Panama」を ", " で分割して配列にし、変数aに代入する。
+ > a= "A man, a plan, a canal, Panama".split(', ')
+ => ["A man", "a plan", "a canal", "Panama"] 
+
+2. 今度は、変数aの要素を連結した結果 (文字列) を、変数sに代入する。
+  > s = a.join 
+ => "A mana plana canalPanama" 
+
+3. 変数sを半角スペースで分割した後、もう一度連結して文字列にする。(ヒント: メソッドチェーンを使うと１行でもできる。)
+ > s.split
+ => ["A", "mana", "plana", "canalPanama"] 
+ 
+ >s.split.join
+ => "AmanaplanacanalPanama" 
+ 
+ >palindrome_tester(s.split.join)
+ It's not a palindrome.
+ => nil 
+ 
+ > palindrome_tester(s.split.join.downcase)
+ It's a palindrome!
+ => nil
+ 
+4. aからzまでの範囲オブジェクトを作成し、7番目の要素を取り出す。同様にして、後ろから７番目の要素を取り出す。
+   (ヒント: 範囲オブジェクトを配列に変換するのを忘れないように)
+ > ('a'..'z').to_a
+ => ["a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z"] 
+ 
+ > ('a'..'z').to_a[6]
+ => "g"
+ 
+ > ('a'..'z').to_a[-7]
+ => "t" 
+ 
