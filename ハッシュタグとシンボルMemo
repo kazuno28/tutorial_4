@@ -1,0 +1,66 @@
+<ハッシュタグとシンボル>
+ハッシュは本質的には配列と同じだが、インデックスとして整数値以外のものも使える点が配列と異なる。
+　※この理由から、Perlなどのいくつかの言語ではハッシュを連想配列と呼ぶこともある。
+ハッシュのインデックス (キー) は、通常何らかのオブジェクトである。
+　Ex)>> user = {}                          # {}は空のハッシュ
+　　 => {}
+     >> user["first_name"] = "Michael"     # キーが "first_name" で値が "Michael"
+     => "Michael"
+     >> user["last_name"] = "Hartl"        # キーが "last_name" で値が "Hartl"
+     => "Hartl"
+     >> user["first_name"]                 # 要素へのアクセスは配列の場合と似ている
+     => "Michael"
+     >> user                               # ハッシュのリテラル表記
+     => {"last_name"=>"Hartl", "first_name"=>"Michael"}
+
+ハッシュは、キーと値のペアを波カッコで囲んで表記する。
+キーと値のペアを持たない波カッコの組 ({}) は空のハッシュである。
+重要なのは、ハッシュの波カッコは、ブロックの波カッコとはまったく別物であるという点！
+ハッシュは配列と似ているが、1つの重要な違いとして、ハッシュでは要素の「並び順」が保証されないという点がある。
+もし要素の順序が重要である場合は、配列を使う必要がある。
+
+ハッシュの1要素を角カッコを使う代わりに、キーと値をハッシュロケットと呼ばれる=> によってリテラル表現するほうが簡単。
+>> user = { "first_name" => "Michael", "last_name" => "Hartl" }
+=> {"last_name"=>"Hartl", "first_name"=>"Michael"}
+
+
+ここまではハッシュのキーとして文字列を使っていたが、Railsでは文字列よりもシンボルを使う方が普通。
+シンボルは文字列と似ているが、クォートで囲む代わりにコロンが前に置かれている点が異なる。
+ Ex)>> "name".split('')
+　　=> ["n", "a", "m", "e"]
+　　>> :name.split('')
+　　NoMethodError: undefined method `split' for :name:Symbol
+　　>> "foobar".reverse
+　　=> "raboof"
+　　>> :foobar.reverse
+　　NoMethodError: undefined method `reverse' for :foobar:Symbol
+
+　:nameはシンボル。シンボルを単なる文字列とみなしても構わない。
+　
+シンボルは、Ruby以外ではごく一部の言語にしか採用されていない特殊なデータ形式。
+ただし文字列と違って、全ての文字が使えるわけではないことに注意！
+>> :foo-bar
+NameError: undefined local variable or method `bar' for main:Object
+>> :2foo
+SyntaxError
+
+
+ハッシュのキーとしてシンボルを採用する場合、user のハッシュは次のように定義できる。
+>> user = { :name => "Michael Hartl", :email => "michael@example.com" }
+=> {:name=>"Michael Hartl", :email=>"michael@example.com"}
+>> user[:name]              # :name に対応する値にアクセスする
+=> "Michael Hartl"
+>> user[:password]          # 未定義のキーに対応する値にアクセスする
+=> nil
+
+未定義のハッシュ値は単純にnilである。
+
+
+ハッシュではシンボルをキーとして使うことが一般的なので、Ruby 1.9からこのような特殊な場合のための新しい記法がサポートされた。
+>> h1 = { :name => "Michael Hartl", :email => "michael@example.com" }
+=> {:name=>"Michael Hartl", :email=>"michael@example.com"}
+>> h2 = { name: "Michael Hartl", email: "michael@example.com" }
+=> {:name=>"Michael Hartl", :email=>"michael@example.com"}
+>> h1 == h2
+=> true
+
