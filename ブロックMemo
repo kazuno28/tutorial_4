@@ -99,3 +99,48 @@ end
 => ["f", "w", "i", "a", "h", "p", "c", "x"]
 >> ('a'..'z').to_a.shuffle[0..7].join  # 取り出した要素を結合して１つの文字列にする
 => "mznpybuj"
+
+
+[演習]
+1. 範囲オブジェクト0..16を使って、各要素の２乗を出力。
+ > (0..16).map { |i| i**2 }
+ => [0, 1, 4, 9, 16, 25, 36, 49, 64, 81, 100, 121, 144, 169, 196, 225, 256] 
+ 
+2. yeller (大声で叫ぶ) というメソッドを定義する。
+　 このメソッドは、文字列の要素で構成された配列を受け取り、各要素を連結した後、大文字にして結果を返す。
+　  Ex)yeller(['o', 'l', 'd'])と実行したとき、"OLD"という結果が返ってくれば成功。
+　  ヒント:mapとupcaseとjoinメソッドを使ってみる。
+　 > def yeller(big_voice)
+   >  voice = big_voice.map { |c| c.upcase }.join
+   >  puts voice
+   > end
+
+   > yeller(['o','l','d'])
+    OLD
+   => nil
+
+3. random_subdomainというメソッドを定義する。
+　 このメソッドはランダムな8文字を生成し、文字列として返す。
+　  ヒント: サブドメインを作るときに使ったRubyコードをメソッド化したもの。
+　 > def ramdom_subdomain 
+　 >   puts ('a'..'z').to_a.shuffle[0..7].join
+　 > end
+　 
+　 > ramdom_subdomain
+　 => "kxdjcpd"
+　 
+4. 「?」の部分を、それぞれ適切なメソッドに置き換える。
+　　 ヒント:split、shuffle、joinメソッドを組み合わせると、メソッドに渡された文字列 (引数) をシャッフルさせることができる。
+   >> def string_shuffle(s)
+   >>   s.?('').?.?
+   >> end
+   >> string_shuffle("foobar")
+   => "oobfra"
+ 
+ > def string_shuffle(s)
+ >  s.split('').shuffle.join
+ > end
+ 
+ > string_shuffle("abcde")
+ => "dbcea"
+ 
