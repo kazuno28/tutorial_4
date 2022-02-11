@@ -64,3 +64,52 @@ SyntaxError
 >> h1 == h2
 => true
 
+{ name: "Michael Hartl", email: "michael@example.com" }
+この記法は、シンボルとハッシュロケットの組み合わせを、キーの名前の後にコロンを置き、その後に値が続くように置き換えたもの。
+
+{ :name => "Michael Hartl" }　と　{ name: "Michael Hartl" }　は等価。
+
+
+ハッシュの値にはほぼ何でも使うことができ、他のハッシュを使うことすらできる。
+>> params = {}        # 'params' というハッシュを定義する ('parameters' の略)。
+=> {}
+>> params[:user] = { name: "Michael Hartl", email: "mhartl@example.com" }
+=> {:name=>"Michael Hartl", :email=>"mhartl@example.com"}
+>> params
+=> {:user=>{:name=>"Michael Hartl", :email=>"mhartl@example.com"}}
+>>  params[:user][:email]
+=> "mhartl@example.com"
+
+
+配列や範囲オブジェクトと同様、ハッシュもeachメソッドに応答する。
+>> flash = { success: "It worked!", danger: "It failed." }
+=> {:success=>"It worked!", :danger=>"It failed."}
+>> flash.each do |key, value|
+?>   puts "Key #{key.inspect} has value #{value.inspect}"
+>> end
+Key :success has value "It worked!"
+Key :danger has value "It failed."
+
+配列のeachメソッドでは、ブロックの変数は1つだけだがハッシュのeachメソッドでは、ブロックの変数はキーと値の2つになっていることに注意！
+　→ハッシュに対してeachメソッドを実行すると、ハッシュの1つの「キーと値のペア」ごとに処理を繰り返す。
+
+
+要求されたオブジェクトを表現する文字列を返すのに便利なinspectメソッド
+>> puts (1..5).to_a            # 配列を文字列として出力
+1
+2
+3
+4
+5
+>> puts (1..5).to_a.inspect    # 配列のリテラルを出力
+[1, 2, 3, 4, 5]
+>> puts :name, :name.inspect
+name
+:name
+>> puts "It worked!", "It worked!".inspect
+It worked!
+"It worked!"
+
+オブジェクトを表示するためにinspectを使うことは非常によくあることなので、 pメソッドというショートカットがある。
+>> p :name             # 'puts :name.inspect' と同じ
+:name
