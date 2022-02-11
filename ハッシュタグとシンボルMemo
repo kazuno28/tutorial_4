@@ -113,3 +113,60 @@ It worked!
 オブジェクトを表示するためにinspectを使うことは非常によくあることなので、 pメソッドというショートカットがある。
 >> p :name             # 'puts :name.inspect' と同じ
 :name
+
+
+[演習]
+1. キーが'one'、'two'、'three'となっていて、それぞれの値が'uno'、'dos'、'tres'となっているハッシュを作ってみる。
+　 その後、ハッシュの各要素をみて、それぞれのキーと値を"'#{key}'はスペイン語で'#{value}'"といった形で出力。
+ > numbers = {one: "uno", two: "dos", three: "tres"}
+ => {:one=>"uno", :two=>"dos", :three=>"tres"}
+ 
+ > numbers.each do |key,value|
+ >   puts "#{key}のスペイン語は#{value}
+ > end
+ oneのスペイン語はuno
+twoのスペイン語はdos
+threeのスペイン語はtres
+ => {:one=>"uno", :two=>"dos", :three=>"tres"} 
+
+2. person1、person2、person3という３つのハッシュを作成し、それぞれのハッシュに:firstと:lastキーを追加し、適当な値を入力。
+　 その後、paramsというハッシュのハッシュを作ってみる。
+　 　1). キーparams[:father]の値にperson1を代入
+　 　> person1= {first: "YAMADA",last: "TARO"}
+     => {:first=>"YAMADA", :last=>"TARO"}
+     
+　 　2). キーparams[:mother]の値にperson2を代入
+　 　> person2= {first: "SUZUKI",last: "JIRO"}
+     => {:first=>"SUZUKI", :last=>"JIRO"} 
+     
+　 　3). キーparams[:child]の値にperson3を代入
+　 　> person3= {first: "TANAKA",last: "SABURO"}
+     => {:first=>"TANAKA", :last=>"SABURO"} 
+     
+　 　4).ハッシュのハッシュを調べていき、正しい値になっているか確かめる。
+　 　　Ex)params[:father][:first]がperson1[:first]と一致しているか確かめる。
+　 　> params={}
+     => {}
+     
+     > params[:father] = person1
+     => {:first=>"YAMADA", :last=>"TARO"}
+     
+     > params[:mother] = person2
+     => {:first=>"SUZUKI", :last=>"JIRO"}
+     
+     > params[:child] = person3
+     => {:first=>"TANAKA", :last=>"SABURO"}
+     
+     > params[:father][:first]
+     => "YAMADA"
+     
+     > person1[:first]
+     => "YAMADA"
+     
+3. userというハッシュを定義する。
+　 このハッシュは３つのキー:name、:email、:password_digestを持っていて、
+　 それぞれの値に名前、メールアドレス、16文字からなるランダムな文字列が代入されている。
+ > user = {name: "kazu",email:"kazu@email.com",password_digest:('a'..'z').to_a.shuffle[0..15].join}
+ => {:name=>"kazu", :email=>"kazu@email.com", :password_digest=>"rtpfcuvkgndayjzs"} 
+ 
+ 
