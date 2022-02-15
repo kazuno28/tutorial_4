@@ -134,4 +134,74 @@ Wordクラスの中では、selfはオブジェクト自身を指す。
 　　なお、Stringクラスの内部では、メソッドや属性を呼び出すときのself.も省略可能。
 　　self == reverse
 
-　　
+[演習]
+1. Rangeクラス、Hashクラス、Symbolクラスの継承階層を調べてみる。
+ [Rangeクラス]
+ > a = 1..5
+ => 1..5
+ 
+ > a.class
+ => Range
+ 
+ > a.class.superclass
+ => Object 
+ 
+ > a.class.superclass.superclass
+ => BasicObject
+ 
+ > a.class.superclass.superclass.superclass
+ => nil 
+ 
+ 
+ [Hashクラス]
+ > h = {}
+ => {} 
+ 
+ > h.class
+ => Hash 
+ 
+ > h.class.superclass
+ => Object 
+ 
+ > h.class.superclass.superclass
+ => BasicObject 
+ 
+ > h.class.superclass.superclass.superclass
+ => nil 
+ 
+ 
+ [Symbolクラス]
+ > s = :symbol
+ => :symbol 
+ 
+ > s.class
+ => Symbol 
+ 
+ > s.class.superclass
+ => Object 
+ 
+ > s.class.superclass.superclass
+ => BasicObject
+ 
+ > s.class.superclass.superclass.superclass
+ => nil 
+ 
+
+2. 上記コードのself.reverseのselfを省略し、reverseと書いてもうまく動くことを確認してみる。
+ > class Word < String
+ >   def palindrome?
+ >     self == reverse
+ >   end
+ > end
+ 
+ > s = Word.new("asdf")
+ => "asdf" 
+ 
+ > s.palindrome?
+ => false 
+ 
+ > s = Word.new("level")
+ => "level" 
+ 
+ > s.palindrome?
+ => true 
