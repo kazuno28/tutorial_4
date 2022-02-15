@@ -56,4 +56,82 @@ lengthのように、インスタンスに対して呼び出すメソッドは�
 3. 比較演算子==を使って、上記２つの課題で作ったそれぞれのオブジェクトが同じであることを確認。
  > a == b
  => true
+
+
+<クラス継承>
+superclassメソッドを使ってクラス階層を調べてみる。
+
+>> s = String.new("foobar")
+=> "foobar"
+>> s.class                        # 変数sのクラスを調べる
+=> String
+>> s.class.superclass             # Stringクラスの親クラスを調べる
+=> Object
+>> s.class.superclass.superclass  # Ruby 1.9からBasicObjectが導入
+=> BasicObject
+>> s.class.superclass.superclass.superclass
+=> nil
+
+これは、継承階層を示している。
+ここでは、StringクラスのスーパークラスはObjectクラスで、ObjectクラスのスーパークラスはBasicObjectクラスだが、
+BasicObjectクラスはスーパークラスを持たないことがわかる。
+
+この図式は、すべての Ruby のオブジェクトにおいて成り立つ。
+クラス階層をたどっていくと、 Rubyにおけるすべてのクラスは最終的にスーパークラスを持たないBasicObjectクラスを継承している。
+
+これが、"Rubyではあらゆるものがオブジェクトである" ということの技術的な意味。
  
+ [Stringクラスの継承階層]
+　　　BasicObject
+　　　　　↑
+　　　　Object
+　　　　　↑
+　　　　String
+
+
+Wordクラスを作成し、その中に、ある単語が回文になっていたらtrueを返すpalindrome?メソッドを作成してみる。
+
+継承のためのRubyの Word < String 記法
+>> class Word < String             # WordクラスはStringクラスを継承する
+>>   # 文字列が回文であればtrueを返す
+>>   def palindrome?
+>>     self == self.reverse        # selfは文字列自身を表す
+>>   end
+>> end
+=> :palindrome?
+こうすることで、新しいpalindrome?メソッドだけではなく、Stringクラスが扱えるすべてのメソッドがWordクラスでも使えるようになる。
+
+>> s = Word.new("level")    # 新しいWordを作成し、"level" で初期化する
+=> "level"
+>> s.palindrome?            # Wordが回文かどうかを調べるメソッド
+=> true
+>> s.length                 # WordはStringで扱える全てのメソッドを継承している
+=> 5
+
+WordクラスはStringクラスを継承しているので、コンソールを使ってクラス階層を明示的に確認できる。
+>> s.class
+=> Word
+>> s.class.superclass
+=> String
+>> s.class.superclass.superclass
+=> Object
+
+ [組み込みではないWordクラスの継承階層]
+ 　　　　　　BasicObject
+　　　　　　↑
+　　　　　Object
+　　　　　　↑
+　　　　　String
+　　　　　　↑
+　　　　　 Word
+　　　　　 
+単語の文字を逆順にしたものが元の単語と同じであるかどうかのチェックを、
+Wordクラスの中から自分自身が持つ単語にアクセスすることで行なっていることに注目する！
+
+Rubyでは、selfキーワードを使ってこれを指定することができる。
+Wordクラスの中では、selfはオブジェクト自身を指す。
+　→self == self.reverseを使って単語が回文であるかどうかを確認できる。
+　　なお、Stringクラスの内部では、メソッドや属性を呼び出すときのself.も省略可能。
+　　self == reverse
+
+　　
