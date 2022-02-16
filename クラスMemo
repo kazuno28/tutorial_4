@@ -280,3 +280,62 @@ Ex) Web アプリケーションでは、変数が絶対に空白にならない
  > end
  > "foobar".shuffle
  => "ofbroa"
+ 
+
+<コントローラクラス>
+今回はStaticPagesControllerはApplicationControllerを継承して定義されるhomeやhelp、aboutアクションを見ていく。
+
+RailsコンソールはセッションごとにローカルのRails環境を読み込むので、
+コンソール内で明示的にコントローラを作成したり、そのクラス階層を調べたりすることができる。
+
+> controller = StaticPagesController.new
+ => #<StaticPagesController:0x0000000004a45160 @_action_has_layout=true, @_routes=nil, @_request=nil, @_response=nil> 
+
+> controller.class
+ => StaticPagesController
+
+> controller.class.superclass
+ => ApplicationController
+
+> controller.class.superclass.superclass
+ => ActionController::Base 
+
+> controller.class.superclass.superclass.superclass
+ => ActionController::Metal 
+
+> controller.class.superclass.superclass.superclass.superclass
+ => AbstractController::Base
+
+> controller.class.superclass.superclass.superclass.superclass.superclass
+ => Object
+
+　【StaticPagesコントローラの継承階層】
+　　　　　　　BasicObject
+　　　　　　　　　 ↑
+　　　　　　　　Object
+　　　　　　　　　 ↑
+　　　　AbstractController::Base
+　　　　　         ↑
+　　　　ActionController::Metal
+　　　　           ↑
+　　　　 ActionController::Base 
+　　　　 　　　　　↑
+　　　　 ApplicationController
+　　　　 　　　　　↑
+　　　　 StaticPagesController
+　　　　 
+Railsコンソールでは、その中からコントローラのアクション (実はメソッド) を呼ぶこともできる。
+> controller.home
+ => nil 
+homeアクションの中身は空なのでnilが返される。
+
+※Railsのアクションには戻り値がない!!!
+　home アクションはWebページを表示するためのものであり、値を返すためのものではない。
+　しかも、第3章では一度もStaticPagesController.newを実行していない。
+　　　
+　　　→なぜこれでうまくいっているのか？
+　　　Railsは確かにRubyで書かれているが、既にRubyとは別物である。
+　　　Railsのクラスは、普通のRubyオブジェクトと同様に振る舞うものもあるが、
+　　　多くのクラスにはRailsの魔法の粉が振りかけられている。（？）
+　　　Railsは独特であり、Rubyとは切り離して学習する必要がある。
+
