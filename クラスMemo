@@ -339,3 +339,32 @@ homeアクションの中身は空なのでnilが返される。
 　　　多くのクラスにはRailsの魔法の粉が振りかけられている。（？）
 　　　Railsは独特であり、Rubyとは切り離して学習する必要がある。
 
+
+[演習]
+1. 第2章で作ったToyアプリケーションのディレクトリでRailsコンソールを開き、
+   User.newと実行することでuserオブジェクトが生成できることを確認。
+ > User.new
+ => #<User id: nil, name: nil, email: nil, created_at: nil, updated_at: nil>
+
+2. 生成したuserオブジェクトのクラスの継承階層を調べてみる。
+　> user = User.new
+　=> #<User id: nil, name: nil, email: nil, created_at: nil, updated_at: nil>
+　
+　> user.class
+　=> User(id: integer, name: string, email: string, created_at: datetime, updated_at: datetime)
+　
+　> user.class.superclass
+　=> ApplicationRecord(abstract)
+　
+　> user.class.superclass.superclass
+　=> ActiveRecord::Base
+　
+　> user.class.superclass.superclass.superclass
+　=> Object
+　
+　> user.class.superclass.superclass.superclass.superclass
+　=> BasicObject
+　
+　> user.class.superclass.superclass.superclass.superclass.superclass
+　=> nil
+ 
