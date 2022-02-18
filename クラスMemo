@@ -368,3 +368,138 @@ homeアクションの中身は空なのでnilが返される。
 　> user.class.superclass.superclass.superclass.superclass.superclass
 　=> nil
  
+ 
+ <ユーザークラス>
+ [example_user.rb]
+ class User
+  attr_accessor :name, :email
+
+  def initialize(attributes = {})
+    @name  = attributes[:name]
+    @email = attributes[:email]
+  end
+
+  def formatted_email
+    "#{@name} <#{@email}>"
+  end
+end
+
+
+>attr_accessor :name, :email
+
+ ユーザー名とメールアドレス (属性: attribute) に対応するアクセサー (accessor) をそれぞれ作成する。
+ アクセサーを作成すると、そのデータを取り出すメソッド (getter) と、データに代入するメソッド (setter) をそれぞれ定義してくれる。
+ 具体的には、この行を実行したことにより、インスタンス変数@nameとインスタンス変数@emailにアクセスするためのメソッドが用意される。
+ 
+ 
+>def initialize(attributes = {})
+    @name  = attributes[:name]
+    @email = attributes[:email]
+  end
+  
+  initializeは、User.newを実行すると自動的に呼び出されるメソッドである。
+  この場合のinitializeメソッドは、attributesという引数を1つ取る。
+  attributes変数は空のハッシュをデフォルトの値として持つため、名前やメールアドレスのないユーザーを作ることができる。
+
+
+>def formatted_email
+    "#{@name} <#{@email}>"
+  end
+  
+  formatted_emailメソッドは、文字列の式展開を利用して、@nameと@emailに割り当てられた値をユーザーのメールアドレスとして構成する。
+  @nameと@emailは両方ともインスタンス変数なので、自動的にformatted_emailメソッドで使えるようになる。
+
+
+コンソールで確認...
+>> require './example_user'     # example_userのコードを読み込む方法
+=> true
+>> example = User.new
+=> #<User:0x224ceec @email=nil, @name=nil>
+>> example.name                 # attributes[:name]は存在しないのでnil
+=> nil
+>> example.name = "Example User"           # 名前を代入する
+=> "Example User"
+>> example.email = "user@example.com"      # メールアドレスを代入する
+=> "user@example.com"
+>> example.formatted_email
+=> "Example User <user@example.com>"
+
+
+requireのパスにある’.’は、Unixの “カレントディレクトリ” (現在のディレクトリ) を表し、
+’./example_user’というパスは、カレントディレクトリからの相対パスでexample_userファイルを探すようにRubyに指示する。
+
+>example.name = "Example User"
+空のexample_userを作成し、対応する属性にそれぞれ手動で値を代入することで、名前とメールアドレスを与える。
+
+@name変数に"Example User"という値を設定、同様にemail属性にも値を設定する。
+これらの値はformatted_emailメソッドで使われる。
+
+initializeメソッドにハッシュを渡すことで、属性が定義済みの他のユーザを作成することができる。
+
+
+>> user = User.new(name: "Michael Hartl", email: "mhartl@example.com")
+=> #<User:0x225167c @email="mhartl@example.com",
+@name="Michael Hartl">
+>> user.formatted_email
+=> "Michael Hartl <mhartl@example.com>"
+
+これは一般にマスアサインメント (mass assignment) と呼ばれる技法で、Railsアプリケーションでよく使われる。
+　Ex)実際にハッシュ引数を使ってオブジェクトを初期化するコードがある。
+
+
+[演習]
+1. Userクラスで定義されているname属性を修正して、first_name属性とlast_name属性に分割してみる。
+　 また、それらの属性を使って "Michael Hartl" といった文字列を返すfull_nameメソッドを定義してみる。
+　 最後に、formatted_emailメソッドの@nameの部分を、full_nameに置き換えてみる。 (元々の結果と同じになっていれば成功)
+　 
+　 class User
+     attr_accessor :first_name,:last_name, :email
+
+     def initialize(attributes = {})
+       @first_name = attributes[:first_name]
+       @last_name = attributes[:first_name]
+       @email = attributes[:email]
+     end
+
+     def full_name
+       "#{@first_name} #{@last_name}"
+     end
+
+     def formatted_email
+        "#{self.full_name} <#{@email}>"
+     end
+   end
+   
+   
+   > require './example_user'
+   => true
+   
+   > user = User.new
+   => #<User:0x000000000363cab0 @first_name=nil, @last_name=nil, @email=nil>
+   
+   > user.first_name = "Michael"
+   => "Michael"
+   
+   > user.last_name = "Hartl"
+   => "Hartl" 
+   
+   > user.email = "mhartl@example.com"
+   => "mhartl@example.com" 
+
+2. "Hartl, Michael" といったフォーマット(苗字と名前がカンマ+半角スペースで区切られている文字列)で返すalphabetical_nameメソッドを定義してみる。
+ example_user.rbに、
+   def alphabetical_name
+     "#{@last_name}, #{@first_name}"
+   end
+ を追加。
+ 
+ > user.alphabetical_name
+ => "Hartl, Michael"
+
+3. full_name.splitとalphabetical_name.split(', ').reverseの結果を比較し、同じ結果になるかどうか確認する。
+ > user.full_name.split
+ => ["Michael", "Hartl"]
+ 
+ > user.alphabetical_name.split(', ').reverse
+ => ["Michael", "Hartl"] 
+ 
