@@ -1,0 +1,67 @@
+[ナビゲーション　演習]
+1. ネコ画像をダウンロード
+　$ curl -OL https://cdn.learnenough.com/kitten.jpg
+　
+2. mvコマンドを使って、ダウンロードしたkitten.jpgファイルを適切なアセットディレクトリに移動
+　$ mv kitten.jpg app/assets/images/kitten.jpg
+
+3. image_tagを使って、kitten.jpg画像を表示
+　[app/views/static_pages/home.html.erb]
+　        ・
+　        ・
+　<%= link_to image_tag("kitten.jpg", alt: "kitten picture") %>
+
+
+[BootstrapとカスタムCSS　演習]
+1. コメントアウトするとHTMLのソースからも消えていることを確認
+
+2. custom.scssにコードを追加し、すべての画像を非表示にしてみる
+　[app/assets/stylesheets/custom.scss]
+　img {
+  display: none;
+}
+
+
+[Partial 演習]
+1. Railsがデフォルトで生成するheadタグの部分を、リスト 5.18のようにrenderに置き換えてみる
+  
+  <!DOCTYPE html>
+<html>
+  <head>
+    <title><%= full_title(yield(:title)) %></title>
+    <%= csrf_meta_tags %>
+    <%= stylesheet_link_tag    'application', media: 'all', 'data-turbolinks-track': 'reload' %>
+    <%= javascript_include_tag 'application', 'data-turbolinks-track': 'reload' %>
+    <%= render 'layouts/shim' %>
+  </head>
+  <body>
+    <%= render 'layouts/header' %>
+    <div class="container">
+      <%= yield %>
+      <%= render 'layouts/footer' %>
+    </div>
+  </body>
+</html>
+  
+  [app/views/layouts/application.html.erb]
+  <!DOCTYPE html>
+  <html>
+    <head>
+      <title><%= full_title(yield(:title)) %></title>
+      
+      # -------- 書き換え --------
+      <%= render 'layouts/rails_default' %>
+      # -------------------------
+      
+      <%= render 'layouts/shim' %>
+    </head>
+    <body>
+      ・
+      ・
+    </body>
+  </html>
+  
+2. 実際にテストを実行して、パーシャルはまだ作っていないので、現時点ではテストは red になることを確認
+
+3. layoutsディレクトリにheadタグ用のパーシャルを作成し、先ほど退避しておいたコードを書き込み、最後にテストが green に戻ることを確認
+  [app/views/layouts/_rails_default.html.erb]
