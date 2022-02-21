@@ -1,0 +1,44 @@
+[アセットパイプライン]
+ <アセットディレクトリ>
+ Railsのアセットパイプラインでは、静的ファイルを目的別に分類する、標準的な３つのディレクトリが使われている。
+  ・app/assets: 現在のアプリケーション固有のアセット
+  ・lib/assets: あなたの開発チームによって作成されたライブラリ用のアセット
+  ・vendor/assets: サードパーティのアセット
+  
+ これらのディレクトリには、それぞれのアセットクラス用のサブディレクトリがある。
+ 　Ex)app/assetsの場合、次のような画像用、JavaScript用、CSS用のサブディレクトリがある。
+ 　$ ls app/assets/
+　　　images/  javascripts/  stylesheets/
+ 
+ custom.scssはサンプルアプリケーション固有のアセットなので、app/assets/stylesheetsに配置されていた。
+ 
+ 
+ <マニフェストファイル>
+ 静的ファイルを上記の場所へそれぞれ配置すれば、マニフェストファイルを使って、それらをどのように1つのファイルにまとめるのかをRailsに指示することができる。
+ 実際にアセットをまとめる処理を行うのはSprocketsというgem。
+ マニフェストファイルはCSSとJavaScriptには適用されますが、画像ファイルには適用されない。
+ 
+ [app/assets/stylesheets/application.css]
+ /*
+ .
+ .
+ *= require_tree .
+ *= require_self
+*/
+
+ *= require_tree . は、app/assets/stylesheetsディレクトリ中のすべてのCSSファイルが、アプリケーションCSSに含まれるようにしている。
+ *= require_self は、CSSの読み込みシーケンスの中で、application.css自身もその対象に含めている。
+ 
+ 
+ <プリプロセッサエンジン>
+ 必要なアセットをディレクトリに配置してまとめた後、Railsはさまざまなプリプロセッサエンジンを介してそれらを実行し、
+ ブラウザに配信できるようにそれらをマニフェストファイルを用いて結合し、サイトテンプレート用に準備する。
+ 
+ Railsはどのプリプロセッサを使うのかを、ファイル名の拡張子を使って判断する。
+ 最も一般的な拡張子は、Sass用の.scss、CoffeeScript用の.coffee、埋め込みRuby (ERb) 用の.erb
+ 
+ プリプロセッサエンジンは、繋げて実行する (chain) ことができる。
+ foobar.js.coffee ... CoffeeScriptプロセッサ経由で実行される。
+ foobar.js.erb.coffee ... CoffeeScriptとERbの両方で実行される。 (コードは右から左実行されるので、この例ではCoffeeScriptが最初に実行される)
+ 
+ 
