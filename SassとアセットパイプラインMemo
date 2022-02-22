@@ -41,4 +41,95 @@
  foobar.js.coffee ... CoffeeScriptプロセッサ経由で実行される。
  foobar.js.erb.coffee ... CoffeeScriptとERbの両方で実行される。 (コードは右から左実行されるので、この例ではCoffeeScriptが最初に実行される)
  
- 
+
+<本番環境の効率性>
+アセットパイプラインの最大のメリットの1つは、本番のアプリケーションで効率的になるように最適化されたアセットも自動的に生成されること。
+　　→CSSとJavaScriptを整理するために、機能を個別のファイルに分割し、(インデントを多用して) 読みやすいフォーマットに整えていた。
+　　　→最小化されていないCSSやJavaScriptファイルを多数に分割すると、ページの読み込み時間が著しく遅くなるから、
+　　　プログラマにとっては便利な方法だが、本番環境にとっては非効率だった。
+
+アセットパイプラインを使うと、開発効率と読み込み時間のどちらを重視するかという問題について悩む必要がなくなる。
+開発環境ではプログラマにとって読みやすいように整理しておき、本番環境ではアセットパイプラインを使ってファイルを最小化すればいい。
+　　→アセットパイプラインがすべてのスタイルシートを1つのCSSファイル (application.css) にまとめ、
+　　すべてのJavaScriptファイルを1つのJSファイル (javascripts.js) にまとめてくれる。
+　　→さらに、これらのファイルすべてに対して不要な空白やインデントを取り除く処理を行い、ファイルサイズを最小化してくれる。
+
+
+<Sassについて（ネストと変数について）>
+Sass は、スタイルシートを記述するための言語であり、CSSに比べて多くの点が強化されている。
+SassはSCSSというフォーマットに対応している。（.scssという拡張子はSCSSであることを表す）
+
+SCSSはCSSに新しい機能を追加しただけで、全く新しい構文を定義したようなものではない。
+　→有効なCSSファイルは、すべてSCSSファイルとしても扱うことができ、
+　既存の記法ルールを使っているプロジェクトにとっても互換性のある便利なフォーマットになっている。
+
+Railsのアセットパイプラインは、.scssという拡張子を持つファイルをSassを使って自動的に処理してくれる。
+　→custom.scssファイルはSassプリプロセッサによって前処理され、その後ブラウザへの配信に備えてパッケージ化される。
+
+[ネスト]
+スタイルシート内に共通のパターンがある場合は、要素をネストさせることができる。
+Ex)
+　　 　.center {　　　　　　　　　　　　　.center {
+　　　 　text-align: center;　　　　　　　　text-align: center;
+　　　 }　　　　　　　　　　　　　　　　　　h1 {
+　　　 　　　　　　　　　　　　　　→　　　　　margin-bottom: 10px;
+　　　 .center h1 {　　　　　　　　　　   　}
+　　　 　margin-bottom: 10px;　　　　　 　｝
+　　　 ｝
+　　　 
+　ネストの内側にあるh1というルールは、.centerのルールを継承している。
+
+Ex)
+　　　#logo {                                          #logo {
+  　　　　　loat: left;                                      float: left;
+  　　　　　margin-right: 10px;                              margin-right: 10px;
+  　　　　　font-size: 1.7em;                                font-size: 1.7em;
+  　　　　　color: #fff;                                     color: #fff;
+        text-transform: uppercase;                       text-transform: uppercase;
+        letter-spacing: -1px;               →            letter-spacing: -1px;
+        padding-top: 9px;                                padding-top: 9px;
+        font-weight: bold;                               font-weight: bold;
+      }                                                  &:hover {
+                                                            color: #fff;
+      #logo:hover {                                         text-decoration: none;
+        color: #fff;                                     }
+        text-decoration: none;                         }
+      }
+      
+　　左のコードでは、#logoというidが2回使われている。
+　　1回目はロゴ自身を定義するために、2回目はhover属性を定義するために使われている。
+　　
+　　2つ目のルールをネストするためには、親属性である#logoを参照する必要がある。
+　　この場合、SCSSではアンパーサンド（&）を使って実現できる。
+　　
+　　Sassは、SCSSをCSSに変換する際に、&:hoverを#logo:hoverに置き換えている。
+
+
+[変数]
+Sassでは、冗長なコードを削除し、より自由な表現を可能にするために、変数が定義できるようになっている。
+Ex)　同じ色を繰り返し参照しているなど...
+　h2 {　　　　　　　　　　　　　　　　$light-gray: #777;
+  　.　　　　　　　　　　　　　　　　 .
+  　.　　　　　　　　　　　　　　　　 .
+ 　 color: #777;                       h2 {
+　}                                     .
+　.　　　　　　　　　　　　→            .
+　.                                    color: $light-gray;
+　footer {                            }
+ 　　 .                                 .
+  　.                                 .
+   color: #777;                       footer {
+　}                                     .
+                                        .
+                                        color: $light-gray;
+                                      }
+
+  #777 を $light-gray という変数に定義する。
+  $light-gray のような変数名は、#777 のような値よりも分かりやすいので、
+  その変数が繰り返し使われないとしても、変数名を与えることは多くの場合有用である。
+  
+  定義されている変数はBootstrapページの「LESS変数一覧」で参照することができる。
+  
+  @gray-light: #777;
+  これは、bootstrap-sassというgemを使えば、SCSSでも同様に$gray-lightという変数が使えることを意味している。
+  
