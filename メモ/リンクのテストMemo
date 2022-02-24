@@ -1,0 +1,63 @@
+<レイアウトのリンク>
+ <リンクのテスト>
+ 「統合テスト (Integration Test)」を使って一連の作業を自動化する。
+ 統合テストを使うと、アプリケーションの動作を端から端まで (end-to-end) シミュレートしてテストすることができる。
+ 
+ 今回の目的は、アプリケーションのHTML構造を調べて、レイアウトの各リンクが正しく動くかどうかチェックすること。
+ １．ルートURL (Homeページ) にGETリクエストを送る
+ ２．正しいページテンプレートが描画されているかどうか確かめる
+ ３．Home、Help、About、Contactの各ページへのリンクが正しく動くか確かめる
+ 
+ [test/integration/site_layout_test.rb]
+ require 'test_helper'
+  class SiteLayoutTest < ActionDispatch::IntegrationTest
+  
+    test "layout links" do
+      get root_path
+      assert_template 'static_pages/home'
+      assert_select "a[href=?]", root_path, count: 2
+      assert_select "a[href=?]", help_path
+      assert_select "a[href=?]", about_path
+      assert_select "a[href=?]", contact_path
+    end
+  end
+  
+assert_selectメソッドの高度なオプションを使って、特定のリンクが存在するかどうかを、aタグとhref属性をオプションで指定して調べている。
+Ex)　assert_select "a[href=?]", about_path　は、Railsは自動的にはてなマーク "?" をabout_pathに置換している。
+　　　　→　<a href="/about">...</a>　というHTMLがあるかどうかをチェックすることができる。
+
+　　 ルートURLへのリンクは2つある場合、　assert_select "a[href=?]", root_path, count: 2　
+　　 という風に書くことで定義したHomeページのリンクの個数も調べることもできる。
+　　 
+「assert_selectのいくつかの使用例」　　 
+　　Code	　　　　　　　　　　　　　　　　　　　　　　　　マッチするHTML
+assert_select "div"	　　　　　　　　　　　　　　　　　　<div>foobar</div>
+assert_select "div", "foobar"	　　　　　　　　　　　　　<div>foobar</div>
+assert_select "div.nav"	　　　　　　　　　　　　　　　　<div class="nav">foobar</div>
+assert_select "div#profile"	　　　　　　　　　　　　　　<div id="profile">foobar</div>
+assert_select "div[name=yo]"	　　　　　　　　　　　　　<div name="yo">hey</div>
+assert_select "a[href=?]", '/', count: 1	　　　　　　　<a href="/">foo</a>
+assert_select "a[href=?]", '/', text: "foo"	　　　　　　<a href="/">foo</a>
+
+　[テストコマンド]
+　$ rails test:integration
+
+
+[演習]
+1. footerパーシャルのabout_pathをcontact_pathに変更してみて、テストが正しくエラーを捕まえてくれるかどうか確認。
+ エラーが出た
+
+2. Applicationヘルパーをテストするファイルを作成し、（コードを書き込む）の部分を適切なコードに置き換えてみる。
+　 　ヒント: [test/helpers/application_helper_test.rb] ではassert_equal <期待される値>, <実際の値>といった形で使ってたが、
+　 　　　　　内部では==演算子で期待される値と実際の値を比較し、正しいかどうかのテストをしている。
+　 [test/helpers/application_helper_test.rb]
+　 require 'test_helper'
+
+   class ApplicationHelperTest < ActionView::TestCase
+     test "full title helper" do
+       assert_equal full_title, "Ruby on Rails Tutorial Sample App"
+       assert_equal full_title("Help"), "Help | Ruby on Rails Tutorial Sample App"
+     end
+   end
+　 
+　テストも問題なし
