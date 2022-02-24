@@ -1,7 +1,7 @@
 [ナビゲーション　演習]
 1. ネコ画像をダウンロード
 　$ curl -OL https://cdn.learnenough.com/kitten.jpg
-　
+
 2. mvコマンドを使って、ダウンロードしたkitten.jpgファイルを適切なアセットディレクトリに移動
 　$ mv kitten.jpg app/assets/images/kitten.jpg
 
@@ -24,7 +24,7 @@
 
 [Partial 演習]
 1. Railsがデフォルトで生成するheadタグの部分を、リスト 5.18のようにrenderに置き換えてみる
-  
+
   <!DOCTYPE html>
 <html>
   <head>
@@ -42,17 +42,17 @@
     </div>
   </body>
 </html>
-  
+
   [app/views/layouts/application.html.erb]
   <!DOCTYPE html>
   <html>
     <head>
       <title><%= full_title(yield(:title)) %></title>
-      
+
       # -------- 書き換え --------
       <%= render 'layouts/rails_default' %>
       # -------------------------
-      
+
       <%= render 'layouts/shim' %>
     </head>
     <body>
@@ -60,12 +60,12 @@
       ・
     </body>
   </html>
-  
+
 2. 実際にテストを実行して、パーシャルはまだ作っていないので、現時点ではテストは red になることを確認
 
 3. layoutsディレクトリにheadタグ用のパーシャルを作成し、先ほど退避しておいたコードを書き込み、最後にテストが green に戻ることを確認
   [app/views/layouts/_rails_default.html.erb]
-  
+
 
 <レイアウトのリンク>
 [RailsのルートURL　演習]
@@ -73,17 +73,29 @@
 　 Helpページの名前付きルートをhelfに変更してみる。
 　[config/routes.rb]
 　get  '/help',    to: 'static_pages#help'　　　　→　　　　get  '/help',    to: 'static_pages#help', as: 'helf'
-　 
+
 2. 先ほどの変更により、テストが redになっていることを確認。ルーティングを更新して、テストを greenにする。
 　[test/controllers/static_pages_controller_test.rb]
-　・
-　・
-　test "should get help" do 　　　　　　　　　　　　　　　　　　　　　　　　　test "should get help" do 
-    get help_path  　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　 get helf_path  
-    assert_response :success　　　　　　　　　　　　　　　　　　　　　　　　　　assert_response :success  
+　test "should get help" do 　　　　　　　　　　　　　　　　　　　　　　　　　test "should get help" do
+    get help_path  　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　 get helf_path
+    assert_response :success　　　　　　　　　　　　　　　　　　　　　　　　　　assert_response :success
     assert_select "title", "Help | Ruby on Rails Tutorial Sample App"　　→　　　assert_select "title", "Help | Ruby on Rails Tutorial Sample App"
   end　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　 end
-  
+
 3. エディタのUndo機能を使って、今回の演習で行った変更を元に戻す。
 　各所「CTRL」＋「Z」
-　
+
+[名前付きルート　演習]
+1. helfルーティングを作成し、レイアウトのリンクを更新してみる。
+ [config/routes.rb]
+ get  '/about',   to: 'static_pages#about'　  　　→　　　　get  '/about',   to: 'static_pages#about', as: 'helf'
+
+ [test/controllers/static_pages_controller_test.rb]
+ test "should et about" do                                                    test "should et about" do
+    get about_path                                                              get helf_path
+    assert_response :success                                                    assert_response :success
+    assert_select "title", "About | Ruby on Rails Tutorial Sample App"　　→     assert_select "title", "About | Ruby on Rails Tutorial Sample App"
+  end                                                                         end
+
+2. エディタのUndo機能を使ってこの演習で行った変更を元に戻す。
+　各所「CTRL」＋「Z」
