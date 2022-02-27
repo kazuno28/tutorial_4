@@ -1,0 +1,98 @@
+<modelファイル　演習>
+1. Railsコンソールを開き、User.newでUserクラスのオブジェクトが生成されること、そしてそのオブジェクトがApplicationRecordを継承していることを確認。
+ > user = User.new
+ => #<User id: nil, name: nil, email: nil, created_at: nil, updated_at: nil> 
+ 
+ > user.class
+ => User(id: integer, name: string, email: string, created_at: datetime, updated_at: datetime) 
+ 
+ > user.class.superclass
+ => ApplicationRecord(abstract)
+ 
+ 
+2. 同様にして、ApplicationRecordがActiveRecord::Baseを継承していることについて確認。
+ ・
+ ・
+ > user.class.superclass.superclass
+ => ActiveRecord::Base 
+
+
+<ユーザーオブジェクトを作成する　演習>
+1. user.nameとuser.emailが、どちらもStringクラスのインスタンスであることを確認。
+ > user.name.class
+ => String 
+ 
+ > user.email.class
+ => String
+
+2. created_atとupdated_atは、どのクラスのインスタンスか？
+ > user.created_at.class
+ => ActiveSupport::TimeWithZone 
+ 
+ > user.updated_at.class
+ => ActiveSupport::TimeWithZone 
+
+
+<ユーザーオブジェクトを検索する　演習>
+1. nameを使ってユーザーオブジェクトを検索してみる。また、 find_by_nameメソッドが使えることも確認。
+ > User.find_by(name: "Michael Hartl")                                                                                                       
+  User Load (0.1ms)  SELECT  "users".* FROM "users" WHERE "users"."name" = ? LIMIT ?  [["name", "Michael Hartl"], ["LIMIT", 1]]
+ => #<User id: 1, name: "Michael Hartl", email: "mhartl@example.com", created_at: "2022-02-27 06:02:17", updated_at: "2022-02-27 06:02:17"> 
+ 
+ > User.find_by_name("Michael Hartl")                                                                                                        
+  User Load (0.2ms)  SELECT  "users".* FROM "users" WHERE "users"."name" = ? LIMIT ?  [["name", "Michael Hartl"], ["LIMIT", 1]]
+ => #<User id: 1, name: "Michael Hartl", email: "mhartl@example.com", created_at: "2022-02-27 06:02:17", updated_at: "2022-02-27 06:02:17"> 
+ 
+2. User.allで生成されるオブジェクトを調べ、ArrayクラスではなくUser::ActiveRecord_Relationクラスであることを確認。
+ > User.all
+  User Load (0.1ms)  SELECT  "users".* FROM "users" LIMIT ?  [["LIMIT", 11]]
+ => #<ActiveRecord::Relation [#<User id: 1, name: "Michael Hartl", email: "mhartl@example.com", created_at: "2022-02-27 06:02:17", updated_at: "2022-02-27 06:02:17">, 
+ #<User id: 2, name: "A Nother", email: "another@example.org", created_at: "2022-02-27 06:05:41", updated_at: "2022-02-27 06:05:41">]> 
+ 
+ > User.all.class
+ => User::ActiveRecord_Relation 
+ 
+3.User.allに対してlengthメソッドを呼び出すと、その長さを求められることを確認。 
+ > User.all.length
+  User Load (0.3ms)  SELECT "users".* FROM "users"
+ => 2 
+ 
+ 
+ <ユーザーオブジェクトを更新する　演習>
+ 1. userオブジェクトへの代入を使ってname属性を使って更新し、saveで保存してみる。
+  > user.update_attribute(:name, "aaa")
+   (0.1ms)  SAVEPOINT active_record_1
+  User Update (0.1ms)  UPDATE "users" SET "updated_at" = ?, "name" = ? WHERE "users"."id" = ?  [["updated_at", "2022-02-27 06:38:44.972533"], ["name", "aaa"], ["id", 1]]
+   (0.0ms)  RELEASE SAVEPOINT active_record_1
+  => true 
+  
+  > user.save
+   (0.1ms)  SAVEPOINT active_record_1
+   (0.0ms)  RELEASE SAVEPOINT active_record_1
+  => true 
+  
+2. 今度はupdate_attributesを使って、email属性を更新および保存してみる。
+ > user.update_attribute(:email, "aaa@gmail.com")                                                                                 
+   (0.1ms)  SAVEPOINT active_record_1
+  User Update (0.1ms)  UPDATE "users" SET "email" = ?, "updated_at" = ? WHERE "users"."id" = ?  [["email", "aaa@gmail.com"], ["updated_at", "2022-02-27 06:40:38.552705"], ["id", 1]]
+   (0.0ms)  RELEASE SAVEPOINT active_record_1
+ => true 
+ 
+ > user.save
+   (0.1ms)  SAVEPOINT active_record_1
+   (0.0ms)  RELEASE SAVEPOINT active_record_1
+ => true 
+ 
+3. 同様にして、マジックカラムであるcreated_atも直接更新できることを確認。
+    ヒント: 更新するときは「1.year.ago」を使うと便利。これはRails流の時間指定の１つで、現在の時刻から１年前の時間を算出してくれる。
+ > user.update_attribute(:created_at, 1.year.ago)
+   (0.1ms)  SAVEPOINT active_record_1
+  User Update (0.1ms)  UPDATE "users" SET "created_at" = ?, "updated_at" = ? WHERE "users"."id" = ?  [["created_at", "2021-02-27 06:43:27.744031"], ["updated_at", "2022-02-27 06:43:27.745822"], ["id", 1]]
+   (0.0ms)  RELEASE SAVEPOINT active_record_1
+ => true 
+ 
+ > user.save
+   (0.1ms)  SAVEPOINT active_record_1
+   (0.0ms)  RELEASE SAVEPOINT active_record_1
+ => true 
+ 
