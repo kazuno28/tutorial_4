@@ -1,0 +1,61 @@
+[ユーザーを表示する]
+<デバックとRails環境>
+[application.html.erb]
+<%= debug(params) if Rails.env.development? %>
+
+if Rails.env.development?　としておくことで、デバッグ情報はRailsの3つのデフォルト環境のうち、開発環境 (development) だけで表示されるようになる。
+Rails.env.development?がtrueになるのは開発環境に限られるため、上記コードは本番アプリケーションやテストで挿入されることはない。
+
+
+[custom.scss]
+sassのミックスイン機能 (ここではbox_sizing) を使っている。
+ミックスイン機能を使うことで、CSSルールのグループをパッケージ化して複数の要素に適用することができる。
+
+[演習]
+1. ブラウザから /about にアクセスし、デバッグ情報が表示されていることを確認。
+　 このページを表示するとき、どのコントローラとアクションが使われていたかparamsの内容から確認。
+　 
+ controller:static_pages
+ action:about
+
+2. Railsコンソールを開き、データベースから最初のユーザー情報を取得し、変数userに格納。
+　 その後、puts user.attributes.to_yamlを実行すると何が表示されるか。表示された結果と、yメソッドを使ったy user.attributesの実行結果を比較する。
+ 
+ > user = User.find_by(email: "mhartl@example.com")
+ 
+ > puts user.attributes.to_yaml
+ ---
+ id: 1
+ name: nick
+ email: mhartl@example.com
+ created_at: !ruby/object:ActiveSupport::TimeWithZone
+   utc: &1 2022-03-01 07:06:09.363083000 Z
+   zone: &2 !ruby/object:ActiveSupport::TimeZone
+     name: Etc/UTC
+   time: *1
+ updated_at: !ruby/object:ActiveSupport::TimeWithZone
+   utc: &3 2022-03-01 07:23:40.663663000 Z
+   zone: *2
+   time: *3
+ password_digest: "$2a$10$j8bBWWjqzTUsyA8pS9fcTOGTQZ9r5StosmJifoMBEMF2mc973B4Sm"
+  => nil 
+ 
+ > y user.attributes
+ ---
+ id: 1
+ name: nick
+ email: mhartl@example.com
+ created_at: !ruby/object:ActiveSupport::TimeWithZone
+   utc: &1 2022-03-01 07:06:09.363083000 Z
+   zone: &2 !ruby/object:ActiveSupport::TimeZone
+     name: Etc/UTC
+   time: *1
+ updated_at: !ruby/object:ActiveSupport::TimeWithZone
+   utc: &3 2022-03-01 07:23:40.663663000 Z
+   zone: *2
+   time: *3
+ password_digest: "$2a$10$j8bBWWjqzTUsyA8pS9fcTOGTQZ9r5StosmJifoMBEMF2mc973B4Sm"
+  => nil 
+
+puts user.attributes.to_yaml と y user.attributes の実行結果は同じ。
+
