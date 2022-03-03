@@ -59,3 +59,15 @@ sassのミックスイン機能 (ここではbox_sizing) を使っている。
 
 puts user.attributes.to_yaml と y user.attributes の実行結果は同じ。
 
+
+<Usersリソース>
+[演習]
+1. 埋め込みRubyを使って、マジックカラム (created_atとupdated_at) の値をshowページに表示。
+ [users/show.html.erb]
+ <%= @user.created_at %>,<%= @user.updated_at %>
+ 
+2. 埋め込みRubyを使って、Time.nowの結果をshowページに表示。ページを更新すると、その結果はどう変わっているか確認。
+ [users/show.html.erb]
+ <%= Time.now %>
+ 
+ 更新すると時間も進んだ
