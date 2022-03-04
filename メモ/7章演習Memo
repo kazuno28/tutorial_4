@@ -14,15 +14,15 @@ sassのミックスイン機能 (ここではbox_sizing) を使っている。
 [演習]
 1. ブラウザから /about にアクセスし、デバッグ情報が表示されていることを確認。
 　 このページを表示するとき、どのコントローラとアクションが使われていたかparamsの内容から確認。
-　 
+
  controller:static_pages
  action:about
 
 2. Railsコンソールを開き、データベースから最初のユーザー情報を取得し、変数userに格納。
 　 その後、puts user.attributes.to_yamlを実行すると何が表示されるか。表示された結果と、yメソッドを使ったy user.attributesの実行結果を比較する。
- 
+
  > user = User.find_by(email: "mhartl@example.com")
- 
+
  > puts user.attributes.to_yaml
  ---
  id: 1
@@ -38,8 +38,8 @@ sassのミックスイン機能 (ここではbox_sizing) を使っている。
    zone: *2
    time: *3
  password_digest: "$2a$10$j8bBWWjqzTUsyA8pS9fcTOGTQZ9r5StosmJifoMBEMF2mc973B4Sm"
-  => nil 
- 
+  => nil
+
  > y user.attributes
  ---
  id: 1
@@ -55,7 +55,7 @@ sassのミックスイン機能 (ここではbox_sizing) を使っている。
    zone: *2
    time: *3
  password_digest: "$2a$10$j8bBWWjqzTUsyA8pS9fcTOGTQZ9r5StosmJifoMBEMF2mc973B4Sm"
-  => nil 
+  => nil
 
 puts user.attributes.to_yaml と y user.attributes の実行結果は同じ。
 
@@ -65,9 +65,29 @@ puts user.attributes.to_yaml と y user.attributes の実行結果は同じ。
 1. 埋め込みRubyを使って、マジックカラム (created_atとupdated_at) の値をshowページに表示。
  [users/show.html.erb]
  <%= @user.created_at %>,<%= @user.updated_at %>
- 
+
 2. 埋め込みRubyを使って、Time.nowの結果をshowページに表示。ページを更新すると、その結果はどう変わっているか確認。
  [users/show.html.erb]
  <%= Time.now %>
- 
+
  更新すると時間も進んだ
+
+
+<debuggerメソッド>
+[演習]
+1. showアクションの中にdebuggerを差し込み、ブラウザから /users/1 にアクセスしコンソールに移り、
+   putsメソッドを使ってparamsハッシュの中身をYAML形式で表示。
+    ヒント:puts user.attributes.to_yamlを参考。
+ (byebug) puts params.to_yaml
+ --- !ruby/object:ActionController::Parameters
+ parameters: !ruby/hash:ActiveSupport::HashWithIndifferentAccess
+   controller: users
+   action: show
+   id: '1'
+ permitted: false
+ nil
+ 
+2. newアクションの中にdebuggerを差し込み、/users/new にアクセスし、@userの内容はどのようになっているか確認。
+ (byebug) puts @user
+
+ nil
