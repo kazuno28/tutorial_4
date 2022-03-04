@@ -91,3 +91,27 @@ puts user.attributes.to_yaml と y user.attributes の実行結果は同じ。
  (byebug) puts @user
 
  nil
+ 
+
+<Gravatar画像とサイドバー>
+[演習]
+2. gravatar_forヘルパーを変更して、sizeをオプション引数として受け取れるようにしてみる。
+　 うまく変更できると、gravatar_for user, size: 50といった呼び出し方ができるようになる。
+ [users_helper.rb]
+  def gravatar_for(user,options = { size: 80 })
+    gravatar_id = Digest::MD5::hexdigest(user.email.downcase)
+    size = options[:size]
+    gravatar_url = "http://secure.gravatar.com/avatar/#{gravatar_id}?s=#{size}"
+    image_tag(gravatar_url,alt: user.name,class: "gravatar")
+  end
+
+3. 先ほど変更したリスト 7.12を、リスト 7.13のように置き換えてもうまく動くことを確認。
+　 この２つの実装方法はどういった違いがあるか。
+ [users_helper.rb]
+  def gravatar_for(user, size: 80)
+    gravatar_id = Digest::MD5::hexdigest(user.email.downcase)
+    gravatar_url = "https://secure.gravatar.com/avatar/#{gravatar_id}?s=#{size}"
+    image_tag(gravatar_url, alt: user.name, class: "gravatar")
+  end
+  
+  ハッシュから変数になった。
