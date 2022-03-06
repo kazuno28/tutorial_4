@@ -86,12 +86,12 @@ puts user.attributes.to_yaml と y user.attributes の実行結果は同じ。
    id: '1'
  permitted: false
  nil
- 
+
 2. newアクションの中にdebuggerを差し込み、/users/new にアクセスし、@userの内容はどのようになっているか確認。
  (byebug) puts @user
 
  nil
- 
+
 
 <Gravatar画像とサイドバー>
 [演習]
@@ -113,18 +113,38 @@ puts user.attributes.to_yaml と y user.attributes の実行結果は同じ。
     gravatar_url = "https://secure.gravatar.com/avatar/#{gravatar_id}?s=#{size}"
     image_tag(gravatar_url, alt: user.name, class: "gravatar")
   end
-  
+
   ハッシュから変数になった。
-  
-  
+
+
 [ユーザー登録フォーム]
 <form_withを使用する>
 [演習]
 1. 試しに、:nameを:nomeに置き換えてみると、どんなエラーメッセージが表示されるようになるか。
  NoMethodError in Users#new が表示される。
- 
+
 2. 試しに、ブロックの変数fをすべてfoobarに置き換えてみて、結果が変わらないことを確認。
 　 変数名をfoobarとするのはあまり良い変更ではなさそう。その理由について考えてみる。
  結果が変わらないことを確認。
  変数名をfoobarとするのは、視認性が悪いからと考える。
- 
+
+
+<フォームHTML>
+フォームを理解するために、小さなコードに分けて考えてみる。
+
+<%= form_with model: @user,local:true do |f| %>
+・
+・
+<% end %>
+doキーワードは、 form_withが1つの変数を持つブロックを取ることを表す。この変数fは “form” のf。
+local: trueと引数を渡す事で、これが通常のHTTPリクエストになり、ページ全体が返ってきてページがリロードされ、エラーメッセージも表示されるようになる。
+
+このfオブジェクトは、HTMLフォーム要素 (テキストフィールド、ラジオボタン、パスワードフィールドなど) に対応するメソッドが呼び出されると、
+@userの属性を設定するために特別に設計されたHTMLを返す。
+<%= f.label :name %>
+<%= f.text_field :name %>
+このコードを実行すると、Userモデルのname属性を設定する、ラベル付きテキストフィールド要素を作成するのに必要なHTMLを作成する。
+
+[演習]
+1. 『HTML編』ではHTMLをすべて手動で書き起こしているが、なぜformタグを使わなかったか考えてみる。
+ 入力・送信フォームを作成していないから。
