@@ -165,3 +165,53 @@ local: trueと引数を渡す事で、これが通常のHTTPリクエストに�
  最初は/signupだが、エラー時にはcreateアクションが/usersを呼び出す。
  renderはnewを通るが、renderがviewを呼び出すときはアクションを経由しないため、URLはcreateアクションの時に指定されてる/usersとなるから。
 
+
+[ユーザー登録成功]
+<登録フォームの完成>
+[演習]
+1. 有効な情報を送信し、ユーザーが実際に作成されたことを、Railsコンソールを使って確認。
+ > User.second
+  User Load (0.2ms)  SELECT  "users".* FROM "users" ORDER BY "users"."id" ASC LIMIT ? OFFSET ?  [["LIMIT", 1], ["OFFSET", 1]]
+ => #<User id: 2, name: "test", email: "test@example.com", created_at: "2022-03-07 07:59:03", updated_at: "2022-03-07 07:59:03",
+ password_digest: "$2a$10$yJx9G6jBBzG0MRhuINiYaOlgSnE8iH/9NJdod/rShDc...">
+
+2. [users_controller.rb]のredirect_to user_url(@user)とredirect_to @userが同じ結果になることを確認。
+ 同じ結果になった。
+
+<flash>
+[演習]
+1. コンソールに移り、文字列内の式展開でシンボルを呼び出してみる。
+　  Ex)"#{:success}"といったコードを実行すると、どんな値が返ってくるか確認。
+ > "#{:success}"
+ => "success"
+
+2. 先ほどの演習で試した結果を参考に、flashはどのような結果になるか考えてみる。
+ >  "#{flash}"
+ => "{:success=>\"It worked!\", :danger=>\"It failed.\"}
+
+ >  "#{flash[:success]}"
+ => "It worked!"
+
+ > "#{flash[:danger]}"
+ => "It failed."
+
+
+<実際のユーザー登録>
+[演習]
+1. Railsコンソールを使って、新しいユーザーが本当に作成されたのかもう一度チェック。
+ > User.find_by(email: "example@railstutorial.org")
+  User Load (0.2ms)  SELECT  "users".* FROM "users" WHERE "users"."email" = ? LIMIT ?  [["email", "example@railstutorial.org"], ["LIMIT", 1]]
+ => #<User id: 1, name: "Rails Tutorial", email: "example@railstutorial.org", created_at: "2022-03-07 08:23:24",
+ updated_at: "2022-03-07 08:23:24", password_digest: "$2a$10$Lp4OvemyURYb3FVk.MrMeOihflVLQf5MIJR9SuUn0JN...">
+
+2. 自分のメールアドレスでユーザー登録を試してみる。既にGravatarに登録している場合、適切な画像が表示されているか確認。
+ 画像が表示されているのを確認。
+
+
+<成功時のテスト>
+[演習]
+1. flashに対するテストを書いてみる。
+ assert_not flash.empty?
+
+3. [users_controller.rb]のリダイレクトの行をコメントアウトすると、テストが失敗することを確認。
+ 失敗した
