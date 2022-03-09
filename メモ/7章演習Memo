@@ -215,3 +215,50 @@ local: trueと引数を渡す事で、これが通常のHTTPリクエストに�
 
 3. [users_controller.rb]のリダイレクトの行をコメントアウトすると、テストが失敗することを確認。
  失敗した
+
+
+[プロのデプロイ]
+下準備として...
+　$ git add -A
+　$ git commit -m "Finish user signup"
+　$ git checkout master
+　$ git merge sign-up
+　
+時点までの変更をmasterブランチにマージしておく。
+
+<本番環境でのSSL>
+SSLとは、Secure Sockets Layer のことである。
+これはローカルのサーバーからネットワークに流れる前に、大事な情報を暗号化する技術。
+
+[config/environments/production.rb]　※コメントアウトされていた
+.
+.
+config.force_ssl = true
+.
+
+次に、遠隔にあるサーバーのSSLをセットアップする。
+　→Heroku上でサンプルアプリケーションを動かし、HerokuのSSL証明書に便乗する。
+　　→この方法はHerokuのサブドメインでのみ有効。独自ドメインを使う場合はSSL証明書を購入する必要がある。
+
+
+<本番環境用のWebサーバー>
+Herokuのデフォルトでは、Rubyだけで実装されたWEBrickというWebサーバーを使っている。
+WEBrickは簡単にセットアップできたり動せることが特長だが、著しいトラフィックを扱うことには適していない。
+　→本番環境として適切なWebサーバーではない。
+　　→WEBrickをPumaに置き換える。Pumaは多数のリクエストを捌くことに適したRuby/Rackアプリケーション用のサーバー。
+
+[config/puma.rb]で、Pumaはデフォルトの設定でも使えるようになっている。
+
+Procfileと呼ばれる、Heroku上でPumaのプロセスを走らせる設定ファイルを作成し、ルートディレクトリに置いておく。
+
+[./Procfile]
+web: bundle exec puma -C config/puma.rb
+
+
+<本番環境へのデプロイ>
+$ rails test
+$ git add -A
+$ git commit -m "Use SSL and the Puma webserver in production"
+$ git push
+$ git push heroku
+$ heroku run rails db:migrate
