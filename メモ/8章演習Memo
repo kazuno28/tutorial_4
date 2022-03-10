@@ -1,0 +1,25 @@
+[セッション]
+HTTPはステートレス (Stateless) なプロトコル。
+　　→「状態 (state)」が「ない (less)」ので、HTTPのリクエスト１つ１つは、
+　　　それより前のリクエストの情報をまったく利用できない、独立したトランザクションとして扱われる。
+
+HTTPは言ってみれば、リクエストが終わると次回は何もかも最初からやり直す忘れっぽいプロトコル。
+　　→ブラウザのあるページから別のページに移動したときに、ユーザーのIDを保持しておく手段がHTTPプロトコル内「には」全くない。
+
+ユーザーログインの必要なWebアプリケーションでは、セッション (Session) と呼ばれる半永続的な接続を、
+ユーザーのパソコンのWebブラウザとRailsサーバーなどに別途設定する。
+　　→セッションはHTTPプロトコルと階層が異なるので、HTTPの特性とは別に接続を確保できる。
+
+<Sessionsコントローラー>
+[演習]
+1. GET login_pathとPOST login_pathとの違いを説明できるか考えてみる。
+ GET login_path は、取得ときで、POST login_path は、登録する時に使う。
+
+2. ターミナルのパイプ機能を使ってrails routesの実行結果とgrepコマンドを繋ぐことで、Usersリソースに関するルーティングだけを表示させることができるが、
+　 同様にして、Sessionsリソースに関する結果だけを表示させてみる。
+　 　ヒント: パイプやgrepの使い方が分からない場合は 『コマンドライン編』の 「grepで検索する」を参考
+ $ rails routes | grep sessions
+  sessions_new GET    /sessions/new(.:format)                                                                  sessions#new
+         login GET    /login(.:format)                                                                         sessions#new
+               POST   /login(.:format)                                                                         sessions#create
+        logout DELETE /logout(.:format)                                                                        sessions#destroy
