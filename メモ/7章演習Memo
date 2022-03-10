@@ -223,7 +223,7 @@ local: trueと引数を渡す事で、これが通常のHTTPリクエストに�
 　$ git commit -m "Finish user signup"
 　$ git checkout master
 　$ git merge sign-up
-　
+
 時点までの変更をmasterブランチにマージしておく。
 
 <本番環境でのSSL>
