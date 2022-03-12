@@ -23,3 +23,43 @@ HTTPは言ってみれば、リクエストが終わると次回は何もかも�
          login GET    /login(.:format)                                                                         sessions#new
                POST   /login(.:format)                                                                         sessions#create
         logout DELETE /logout(.:format)                                                                        sessions#destroy
+
+
+<ログインフォーム>
+[演習]
+1. [sessions/new.html.erb]で定義したフォームで送信すると、Sessionsコントローラのcreateアクションに到達する。
+　 Railsはこれをどうやって実現しているか、考えてみる。
+ form_forヘルパーはpostメソッドを生成する。
+ ログインフォームのHTMLでは、sessionコントローラとlogin_pathを引数に指定している。
+ 　→essionコントローラのcreateアクションが[sessions/new.html.erb]のform_forで指定されている。
+
+
+<ユーザーの検索と認証>
+[user && user.authenticate(…)の結果の組み合わせ]
+　User	　　　　　　　Password	　　　　　　a && b
+存在しない	　　　　何でもよい	　　　　　(nil && [オブジェクト]) == false
+有効なユーザー	　　誤ったパスワード	　　(true && false) == false
+有効なユーザー	　　正しいパスワード	　　(true && true) == true
+
+[演習]
+1. Railsコンソールを使って、[user && user.authenticate(…)の結果の組み合わせ]のそれぞれの式が合っているか確かめる。
+　 まずはuser = nilの場合を、次にuser = User.firstとした場合を確かめてみる。
+　 　ヒント: 必ず論理値オブジェクトとなるように、!!のテクニックを使う。例: !!(user && user.authenticate('foobar'))
+ > user = nil
+ => nil 
+ 
+ > !!(user && user.authenticate('foobar'))
+ => false 
+ 
+ > user = User.first
+  User Load (0.2ms)  SELECT  "users".* FROM "users" ORDER BY "users"."id" ASC LIMIT ?  [["LIMIT", 1]]
+ => #<User id: 1, name: "Rails Tutorial", email: "example@railstutorial.org", created_at: "2022-03-07 08:23:24", 
+      updated_at: "2022-03-07 08:23:24", password_digest: "$2a$10$Lp4OvemyURYb3FVk.MrMeOihflVLQf5MIJR9SuUn0JN..."> 
+      
+ > !!(user && user.authenticate('aaaaaa'))
+ => true 
+ 
+ > !!(user && user.authenticate('hogehoge'))
+ => false
+ 
+ 
