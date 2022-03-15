@@ -133,3 +133,12 @@ end
  > @current_user ||= User.find_by(id: session[:user_id])
  => #<User id: 1, name: "Rails Tutorial", email: "example@railstutorial.org", created_at: "2022-03-07 08:23:24",
       updated_at: "2022-03-07 08:23:24", password_digest: "$2a$10$Lp4OvemyURYb3FVk.MrMeOihflVLQf5MIJR9SuUn0JN...">
+      
+
+<レイアウトを変更>
+[演習]
+1. ブラウザのcookieインスペクタ機能を使って、セッション用のcookieを削除する。ヘッダー部分にあるリンクは非ログイン状態のものになっているか確認。
+ 非ログイン状態のものになった。
+ 
+2. もう一度ログインしてみて、ヘッダーのレイアウトが変わったことを確認。その後、ブラウザを再起動させ、再び非ログイン状態に戻ったことも確認。
+ 確認
