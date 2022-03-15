@@ -46,23 +46,23 @@ HTTPは言ってみれば、リクエストが終わると次回は何もかも�
 　 まずはuser = nilの場合を、次にuser = User.firstとした場合を確かめてみる。
 　 　ヒント: 必ず論理値オブジェクトとなるように、!!のテクニックを使う。例: !!(user && user.authenticate('foobar'))
  > user = nil
- => nil 
- 
+ => nil
+
  > !!(user && user.authenticate('foobar'))
- => false 
- 
+ => false
+
  > user = User.first
   User Load (0.2ms)  SELECT  "users".* FROM "users" ORDER BY "users"."id" ASC LIMIT ?  [["LIMIT", 1]]
- => #<User id: 1, name: "Rails Tutorial", email: "example@railstutorial.org", created_at: "2022-03-07 08:23:24", 
-      updated_at: "2022-03-07 08:23:24", password_digest: "$2a$10$Lp4OvemyURYb3FVk.MrMeOihflVLQf5MIJR9SuUn0JN..."> 
-      
+ => #<User id: 1, name: "Rails Tutorial", email: "example@railstutorial.org", created_at: "2022-03-07 08:23:24",
+      updated_at: "2022-03-07 08:23:24", password_digest: "$2a$10$Lp4OvemyURYb3FVk.MrMeOihflVLQf5MIJR9SuUn0JN...">
+
  > !!(user && user.authenticate('aaaaaa'))
- => true 
- 
+ => true
+
  > !!(user && user.authenticate('hogehoge'))
  => false
- 
- 
+
+
 <フラッシュのテスト>
  テストの流れ
 1. ログイン用のパスを開く
@@ -91,8 +91,45 @@ sessionメソッドで作成した一時cookiesは自動的に暗号化され、
 
 [演習]
 1. 有効なユーザーで実際にログインし、ブラウザからcookiesの情報を調べてみる。このとき、sessionの値はどうなっているか？
- 
- 
+
+
 2. Expires（有効期限）の値について調べる。
  ブラウザセッションの終了時。
- 
+
+
+<現在のユーザー>
+ユーザーIDを一時セッションの中に安全に置けるようになったので、今度はそのユーザーIDを別のページで取り出す。
+　→current_userメソッドを定義して、セッションIDに対応するユーザー名をデータベースから取り出せるようにする。
+current_userメソッドのEx) <%= current_user.name %> , redirect_to current_user
+
+if @current_user.nil?
+  @current_user = User.find_by(id: session[:user_id])
+else　　　　　　　　　　　　　　　　　　　　　　　　　 #or演算子「||」を使うと→ @current_user = @current_user || User.find_by(id: session[:user_id])
+  @current_user
+end
+
+[演習]
+1. Railsコンソールを使って、User.find_by(id: ...)で対応するユーザーが検索に引っかからなかったとき、nilを返すことを確認。
+ > session ={}
+ => {}
+
+ > session[:user_id] = nil
+ => nil
+
+ > @current_user ||= User.find_by(id: session[:user_id])
+  User Load (0.2ms)  SELECT  "users".* FROM "users" WHERE "users"."id" IS NULL LIMIT ?  [["LIMIT", 1]]
+ => nil
+
+ > session[:user_id] = User.first.id
+  User Load (0.1ms)  SELECT  "users".* FROM "users" ORDER BY "users"."id" ASC LIMIT ?  [["LIMIT", 1]]
+ => 1
+
+2. :user_idキーを持つsessionハッシュを作成。||=演算子がうまく動くことも確認。
+ > @current_user ||= User.find_by(id: session[:user_id])
+  User Load (0.2ms)  SELECT  "users".* FROM "users" WHERE "users"."id" = ? LIMIT ?  [["id", 1], ["LIMIT", 1]]
+ => #<User id: 1, name: "Rails Tutorial", email: "example@railstutorial.org", created_at: "2022-03-07 08:23:24",
+      updated_at: "2022-03-07 08:23:24", password_digest: "$2a$10$Lp4OvemyURYb3FVk.MrMeOihflVLQf5MIJR9SuUn0JN...">
+
+ > @current_user ||= User.find_by(id: session[:user_id])
+ => #<User id: 1, name: "Rails Tutorial", email: "example@railstutorial.org", created_at: "2022-03-07 08:23:24",
+      updated_at: "2022-03-07 08:23:24", password_digest: "$2a$10$Lp4OvemyURYb3FVk.MrMeOihflVLQf5MIJR9SuUn0JN...">
