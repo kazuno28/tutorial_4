@@ -1,0 +1,101 @@
+[Remember me機能]
+ユーザーのログイン状態をブラウザを閉じた後でも有効にする [remember me] 機能を実装していく。
+この機能を使うと、ユーザーが明示的にログアウトを実行しない限り、ログイン状態を維持することができるようになる。
+後半では、この機能を使うかどうかをユーザーに決めてもらうため、[remember me] のチェックボックスをログインフォームに追加していく。
+
+<記憶トークンと暗号化>
+セッションの永続化の第一歩として記憶トークン (remember token) を生成し、cookiesメソッドによる永続的cookiesの作成や、
+安全性の高い記憶ダイジェスト (remember digest) によるトークン認証にこの記憶トークンを活用する。
+
+sessionメソッドで保存した情報は自動的に安全が保たれますが、cookiesメソッドに保存する情報はそのようにはなっていない。
+cookiesを永続化するとセッションハイジャックという攻撃を受ける可能性がある。
+　→この攻撃は、記憶トークンを奪って、特定のユーザーになりすましてログインするというもの。
+ [cookiesを盗み出す有名な方法]
+  1. 管理の甘いネットワークを通過するネットワークパケットからパケットスニッファという特殊なソフトウェアで直接cookieを取り出す。
+  2. データベースから記憶トークンを取り出す。
+  3. クロスサイトスクリプティング (XSS) を使う。 
+  4. ユーザーがログインしているパソコンやスマホを直接操作してアクセスを奪い取る。
+  
+ [1]を防止するためにSecure Sockets Layer(SSL)をサイト全体に適用して、ネットワークデータを暗号化で保護し、
+ パケットスニッファから読み取られないようにする。
+ 
+ [2]の対策としては、記憶トークンをそのままデータベースに保存するのではなく、記憶トークンのハッシュ値を保存するようにする。
+ 
+ [3]の問題については、Railsによって自動的に対策が行われる。ビューのテンプレートで入力した内容をすべて自動的にエスケープする。
+ 
+ [4]システム側での根本的な防衛手段を講じることは不可能だが、二次被害を最小限に留めることは可能。
+ ユーザーが(別端末などで)ログアウトしたときにトークンを必ず変更するようにし、セキュリティ上重要になる可能性のある情報を表示するときは
+ デジタル署名(digital signature)を行うようにする。
+
+ <セッション作成手順>
+ 1. 記憶トークンにはランダムな文字列を生成して用いる。
+ 2. ブラウザのcookiesにトークンを保存するときには、有効期限を設定する。
+ 3. トークンはハッシュ値に変換してからデータベースに保存する。
+ 4. ブラウザのcookiesに保存するユーザーIDは暗号化しておく。
+ 5. 永続ユーザーIDを含むcookiesを受け取ったら、そのIDでデータベースを検索し、記憶トークンのcookiesがデータベース内のハッシュ値と一致することを確認する。
+
+[演習]
+1. コンソールを開き、データベースにある最初のユーザーを変数userに代入する。その後、そのuserオブジェクトからrememberメソッドがうまく動くかどうか確認。
+　 また、remember_tokenとremember_digestの違いも確認。
+ > user = User.first
+  User Load (0.1ms)  SELECT  "users".* FROM "users" ORDER BY "users"."id" ASC LIMIT ?  [["LIMIT", 1]]
+ => #<User id: 1, name: "Rails Tutorial", email: "example@railstutorial.org", created_at: "2022-03-07 08:23:24", updated_at: "2022-03-07 08:23:24", 
+ password_digest: "$2a$10$Lp4OvemyURYb3FVk.MrMeOihflVLQf5MIJR9SuUn0JN...", remember_digest: nil> 
+ 
+ > user.remember
+  (0.1ms)  begin transaction
+  User Update (4.3ms)  UPDATE "users" SET "updated_at" = ?, "remember_digest" = ? WHERE "users"."id" = ?  [["updated_at", "2022-03-19 05:34:51.050213"], 
+  ["remember_digest", "$2a$10$2611BjLLCIfghXxAMSvq2Ogj8igwWlNHignE.Q1N.0RBNuMhUUrbm"], ["id", 1]]
+  (5.2ms)  commit transaction
+ => true 
+ 
+ > user.remember_token
+ => "dhrQpiNI-uZzSMNhSRV65A" 
+ 
+ > user.remember_digest
+ => "$2a$10$2611BjLLCIfghXxAMSvq2Ogj8igwWlNHignE.Q1N.0RBNuMhUUrbm" 
+ 
+2. [user.rb]では、明示的にUserクラスを呼び出すことで、新しいトークンやダイジェスト用のクラスメソッドを定義した。
+　 実際、User.new_tokenやUser.digestを使って呼び出せるようになったので、おそらく最も明確なクラスメソッドの定義方法であると言える。
+　 しかし、より「Ruby的に正しい」クラスメソッドの定義方法が２通りある。1つはややわかりにくく、もう1つは非常に混乱する。
+　 テストスイートを実行して、ややわかりにくいリスト 9.4の実装でも、非常に混乱しやすいリスト 9.5の実装でも、いずれも正しく動くことを確認。
+　 　ヒント: selfは、通常の文脈ではUser「モデル」、つまりユーザーオブジェクトのインスタンスを指すが、
+　 　リスト 9.4やリスト 9.5の文脈では、selfはUser「クラス」を指すことに注意。
+ [リスト 9.4　user.rb]
+ class User < ApplicationRecord
+  .
+  .
+  # 渡された文字列のハッシュ値を返す
+  def self.digest(string)
+    cost = ActiveModel::SecurePassword.min_cost ? BCrypt::Engine::MIN_COST :
+                                                  BCrypt::Engine.cost
+    BCrypt::Password.create(string, cost: cost)
+  end
+
+  # ランダムなトークンを返す
+  def self.new_token
+    SecureRandom.urlsafe_base64
+  end
+  .
+  .
+end
+
+[リスト 9.5　user.rb]
+class User < ApplicationRecord
+  .
+  .
+  class << self
+    # 渡された文字列のハッシュ値を返す
+    def digest(string)
+      cost = ActiveModel::SecurePassword.min_cost ? BCrypt::Engine::MIN_COST :
+                                                    BCrypt::Engine.cost
+      BCrypt::Password.create(string, cost: cost)
+    end
+
+    # ランダムなトークンを返す
+    def new_token
+      SecureRandom.urlsafe_base64
+    end
+  end
+  .
+  .
