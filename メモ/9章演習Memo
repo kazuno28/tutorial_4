@@ -119,3 +119,8 @@ class User < ApplicationRecord
  
  > user.authenticated?(user.remember_token)
  => true 
+
+
+<ユーザーを忘れる>
+user.forgetメソッドをさ作成して、user.rememberが取り消されるようにする。
+　→記憶ダイジェストをnilで更新する。
