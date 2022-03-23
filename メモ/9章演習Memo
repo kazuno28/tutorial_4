@@ -13,16 +13,16 @@ cookiesを永続化するとセッションハイジャックという攻撃を�
  [cookiesを盗み出す有名な方法]
   1. 管理の甘いネットワークを通過するネットワークパケットからパケットスニッファという特殊なソフトウェアで直接cookieを取り出す。
   2. データベースから記憶トークンを取り出す。
-  3. クロスサイトスクリプティング (XSS) を使う。 
+  3. クロスサイトスクリプティング (XSS) を使う。
   4. ユーザーがログインしているパソコンやスマホを直接操作してアクセスを奪い取る。
-  
+
  [1]を防止するためにSecure Sockets Layer(SSL)をサイト全体に適用して、ネットワークデータを暗号化で保護し、
  パケットスニッファから読み取られないようにする。
- 
+
  [2]の対策としては、記憶トークンをそのままデータベースに保存するのではなく、記憶トークンのハッシュ値を保存するようにする。
- 
+
  [3]の問題については、Railsによって自動的に対策が行われる。ビューのテンプレートで入力した内容をすべて自動的にエスケープする。
- 
+
  [4]システム側での根本的な防衛手段を講じることは不可能だが、二次被害を最小限に留めることは可能。
  ユーザーが(別端末などで)ログアウトしたときにトークンを必ず変更するようにし、セキュリティ上重要になる可能性のある情報を表示するときは
  デジタル署名(digital signature)を行うようにする。
@@ -39,22 +39,22 @@ cookiesを永続化するとセッションハイジャックという攻撃を�
 　 また、remember_tokenとremember_digestの違いも確認。
  > user = User.first
   User Load (0.1ms)  SELECT  "users".* FROM "users" ORDER BY "users"."id" ASC LIMIT ?  [["LIMIT", 1]]
- => #<User id: 1, name: "Rails Tutorial", email: "example@railstutorial.org", created_at: "2022-03-07 08:23:24", updated_at: "2022-03-07 08:23:24", 
- password_digest: "$2a$10$Lp4OvemyURYb3FVk.MrMeOihflVLQf5MIJR9SuUn0JN...", remember_digest: nil> 
- 
+ => #<User id: 1, name: "Rails Tutorial", email: "example@railstutorial.org", created_at: "2022-03-07 08:23:24", updated_at: "2022-03-07 08:23:24",
+ password_digest: "$2a$10$Lp4OvemyURYb3FVk.MrMeOihflVLQf5MIJR9SuUn0JN...", remember_digest: nil>
+
  > user.remember
   (0.1ms)  begin transaction
-  User Update (4.3ms)  UPDATE "users" SET "updated_at" = ?, "remember_digest" = ? WHERE "users"."id" = ?  [["updated_at", "2022-03-19 05:34:51.050213"], 
+  User Update (4.3ms)  UPDATE "users" SET "updated_at" = ?, "remember_digest" = ? WHERE "users"."id" = ?  [["updated_at", "2022-03-19 05:34:51.050213"],
   ["remember_digest", "$2a$10$2611BjLLCIfghXxAMSvq2Ogj8igwWlNHignE.Q1N.0RBNuMhUUrbm"], ["id", 1]]
   (5.2ms)  commit transaction
- => true 
- 
+ => true
+
  > user.remember_token
- => "dhrQpiNI-uZzSMNhSRV65A" 
- 
+ => "dhrQpiNI-uZzSMNhSRV65A"
+
  > user.remember_digest
- => "$2a$10$2611BjLLCIfghXxAMSvq2Ogj8igwWlNHignE.Q1N.0RBNuMhUUrbm" 
- 
+ => "$2a$10$2611BjLLCIfghXxAMSvq2Ogj8igwWlNHignE.Q1N.0RBNuMhUUrbm"
+
 2. [user.rb]では、明示的にUserクラスを呼び出すことで、新しいトークンやダイジェスト用のクラスメソッドを定義した。
 　 実際、User.new_tokenやUser.digestを使って呼び出せるようになったので、おそらく最も明確なクラスメソッドの定義方法であると言える。
 　 しかし、より「Ruby的に正しい」クラスメソッドの定義方法が２通りある。1つはややわかりにくく、もう1つは非常に混乱する。
@@ -99,26 +99,26 @@ class User < ApplicationRecord
   end
   .
   .
-  
-  
+
+
 <ログイン状態の保持>
 [演習]
 2. コンソールを開き、[user.rb]のauthenticated?メソッドがうまく動くかどうか確認。
  > user = User.first
   User Load (0.1ms)  SELECT  "users".* FROM "users" ORDER BY "users"."id" ASC LIMIT ?  [["LIMIT", 1]]
- => #<User id: 1, name: "Rails Tutorial", email: "example@railstutorial.org", created_at: "2022-03-07 08:23:24", 
- updated_at: "2022-03-19 05:34:51", password_digest: "$2a$10$Lp4OvemyURYb3FVk.MrMeOihflVLQf5MIJR9SuUn0JN...", 
- remember_digest: "$2a$10$2611BjLLCIfghXxAMSvq2Ogj8igwWlNHignE.Q1N.0R..."> 
- 
+ => #<User id: 1, name: "Rails Tutorial", email: "example@railstutorial.org", created_at: "2022-03-07 08:23:24",
+ updated_at: "2022-03-19 05:34:51", password_digest: "$2a$10$Lp4OvemyURYb3FVk.MrMeOihflVLQf5MIJR9SuUn0JN...",
+ remember_digest: "$2a$10$2611BjLLCIfghXxAMSvq2Ogj8igwWlNHignE.Q1N.0R...">
+
  > user.remember
    (0.1ms)  begin transaction
-  User Update (4.0ms)  UPDATE "users" SET "updated_at" = ?, "remember_digest" = ? WHERE "users"."id" = ?  
+  User Update (4.0ms)  UPDATE "users" SET "updated_at" = ?, "remember_digest" = ? WHERE "users"."id" = ?
   [["updated_at", "2022-03-20 07:12:42.110834"], ["remember_digest", "$2a$10$rduAXPIiRDiMgeQkzds5pePts.mRazPRrBA9v1nPJ0PMPRVk1.2g2"], ["id", 1]]
    (5.1ms)  commit transaction
- => true 
- 
+ => true
+
  > user.authenticated?(user.remember_token)
- => true 
+ => true
 
 
 <ユーザーを忘れる>
@@ -162,3 +162,36 @@ user.forgetメソッドをさ作成して、user.rememberが取り消される�
 
 3. 上のコードでコメントアウトした部分を元に戻し、テストスイートが red から greenになることを確認。
  コメントアウトアウトを元に戻す。
+
+
+<[Remember me]チェックボックス>
+チェックボックスがオンのときにユーザーを記憶し、オフのときには記憶しないようにする。
+　ログインフォームから送信されたparamsハッシュには既にチェックボックスの値が含まれている。
+　[sessions/new.html.erb]のフォームに無効な値を入力して実際に送信すれば、ページのデバッグ情報で値を確認することもできる。
+params[:session][:remember_me]の値は、チェックボックスがオンのときに'1'になり、オフのときに'0'になる。
+paramsハッシュのこの値を調べれば、送信された値に基いてユーザーを記憶したり忘れたりできるようになる。
+
+「三項演算子 (ternary operator)」を使うと、
+　　if params[:session][:remember_me] == '1'
+  　　remember(user)
+　　else　　　　　　　　　　　　　　　　　　　　　　　　→　　params[:session][:remember_me] == '1' ? remember(user) : forget(user)
+  　　forget(user)
+　　end
+　と、一行にまとめることができる。
+このコードを使うことで、Sessionsコントローラのcreateアクション内にあったremember userがコンパクトになった。
+
+[演習]
+1. ブラウザでcookies情報を調べ、[remember me] をチェックしたときに意図した結果になっているかどうかを確認。
+ remember_tokenとuser_idは変わっていないので[Remember me]がちゃんと機能している。
+
+2. コンソールを開き、三項演算子を使った実例を考えてみる。(コラム 9.2参考)
+ > team = "RealMadrid"
+ => "RealMadrid"
+
+ > puts team == "RealMadrid" ? "Madridista!" : "No~"
+  Madridista!
+ => nil
+
+ > puts team == "Barcelona" ? "Madridista!" : "No~"
+  No~
+ => nil
