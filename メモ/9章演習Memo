@@ -242,4 +242,30 @@ paramsハッシュのこの値を調べれば、送信された値に基いて�
     assert_equal （コードを書き込む）, assigns(:user).（コードを書き込む）        →　　assert_equal cookies['remember_token'], assigns(:user).remember_token
   end
   
+
+<[Remember me]をテストする>
+これまでの節で実装した永続的セッションが動作するかどうかを手動で確認していた。
+　→実は、current_user内のある複雑な分岐処理については、これまでまったくテストが行われていない。
+テストを忘れている疑いのあるコードブロック内にわざと例外発生を仕込むというテクニックを使う。
+　→そのコードブロックがテストから漏れていれば、テストはパスしてしまうはず...
+　 コードブロックがテストから漏れていなければ、例外が発生してテストが中断するはず...
+[sessions_helper.rb]に[リスト 9.29]のようにraiseを追加してテスト
+　→greenになったので正常ではないことがわかる。
+
+current_userをリファクタリングするので同時にテストも作成しておく!!!
+また、リスト 9.24で定義したlog_in_asヘルパーメソッドでは、session[:user_id]と定義してしまっている。
+このままでは、current_userメソッドが抱えている複雑な分岐処理を統合テストでチェックすることが非常に困難。
+ただ、Sessionsヘルパーのテストでcurrent_userを直接テストすれば、この制約を突破することができる。
+
+[sessions_helper_test.rb]を作成
+ <テスト手順>
+ 1. fixtureでuser変数を定義する
+ 2. 渡されたユーザーをrememberメソッドで記憶する
+ 3. current_userが、渡されたユーザーと同じであることを確認する
+rememberメソッドではsession[:user_id]が設定されないので、これで問題となっている複雑な分岐処理もテストできるようになる。
+
+
+[演習]
+1. [sessions_helper.rb]にあるauthenticated?の式を削除すると、[sessions_helper_test.rb]の２つ目のテストで失敗することを確かめる。
+   (このテストが正しい対象をテストしていることを確認)
  
