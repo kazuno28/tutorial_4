@@ -9,7 +9,7 @@
 　 Gravatarの編集ページへのリンクにこの設定をする。
  [users/edit.html.erb]
  <a href="http://gravatar.com/emails" target="_blank" rel="noopener">changes</a>
- 
+
 2. [リスト 10.5]のパーシャルを使って、new.html.erbビュー(リスト 10.6)とedit.html.erbビュー(リスト 10.7)をリファクタリングしてみる(コードの重複を取り除く)。
  　ヒント: 3.4.3で使ったprovideメソッドを使うと、重複を取り除ける。
  リスト通りやる。
@@ -25,7 +25,7 @@
 [演習]
 1. [users_edit_test.rb]のテストに１行追加し、正しい数のエラーメッセージが表示されているかテストしてみる。
 　 ヒント: 表 5.2で紹介したassert_selectを使ってalertクラスのdivタグを探しだし、「The form contains 4 errors.」というテキストを精査
-　 
+
 
 <TDDで編集を成功させる>
 [演習]
@@ -52,7 +52,7 @@
 
 2. 上記のアクションのうち、どちらがブラウザで簡単にテストできるアクションか？
  editの方がGETメソッドなのでブラウザから簡単にテストすることができる。
- 
+
 
 <フレンドリーフォワーディング>
 [演習]
@@ -60,12 +60,40 @@
 　 次回以降のログインのときには、転送先のURLはデフォルト (プロフィール画面) に戻っている必要がある。
 　 　ヒント: リスト 10.29のsession[:forwarding_url]が正しい値かどうか確認するテストを追加してみる。
  [users_edit_test.rb]に、
-  assert_equal session[:forwarding_url], "http://www.example.com" + 
-  edit_user_path(@user) 
+  assert_equal session[:forwarding_url], "http://www.example.com" +
+  edit_user_path(@user)
  を追加。
 
 2. 7.1.3で紹介したdebuggerメソッドをSessionsコントローラのnewアクションに置いてみる。
 　 その後、ログアウトして /users/1/edit にアクセスしてみる。(デバッガーが途中で処理を止めるはず)
 　 ここでコンソールに移り、session[:forwarding_url]の値が正しいかどうか確認。
 　 また、newアクションにアクセスしたときのrequest.get?の値も確認。
- 
+
+
+[すべてのユーザーを表示する]
+<ユーザーの一覧ページ>
+[演習]
+1. レイアウトにあるすべてのリンクに対して統合テストを書いてみる。
+　 ログイン済みユーザーとそうでないユーザーのそれぞれに対して、正しい振る舞いを考える。
+　 　ヒント: log_in_asヘルパーを使ってリスト 5.32にテストを追加してみる。
+ [site_layout_test.rb]
+ .
+ .
+  def setup
+    @user = users(:michael)
+  end
+
+  test "layout links when logged in user" do
+    log_in_as(@user)
+    get root_path
+    assert_select "a[href=?]", root_path, count: 2
+    assert_select "a[href=?]", help_path
+    assert_select "a[href=?]", about_path
+    assert_select "a[href=?]", contact_path
+    assert_select "a[href=?]", signup_path
+    assert_select "a[href=?]", users_path
+    assert_select "a[href=?]", user_path(@user)
+    assert_select "a[href=?]", edit_user_path(@user)
+    assert_select "a[href=?]", logout_path
+  end
+ end
