@@ -103,3 +103,27 @@
 [演習]
 1. 試しに他人の編集ページにアクセスしてみて、10.2.2で実装したようにリダイレクトされるかどうかを確かめる。
  試しに、/users/1/edit と入力すると、root_urlに飛ばされた。
+
+
+<ページネーション>
+[演習]
+1. Railsコンソールを開き、pageオプションにnilをセットして実行すると、１ページ目のユーザーが取得できることを確認。
+ > User.paginate(page: nil)
+  User Load (0.2ms)  SELECT  "users".* FROM "users" LIMIT ? OFFSET ?  [["LIMIT", 11], ["OFFSET", 0]]
+   (0.1ms)  SELECT COUNT(*) FROM "users"
+ => #<ActiveRecord::Relation [#<User id: 1, name: "Example User", email: "example@railstutorial.org", created_at: "2022-04-13 02:08:37", 
+ updated_at: "2022-04-13 02:08:37", password_digest: "$2a$10$3kLWGS5yW.W.owwAXwHiQuO8hICSBA06uqGWQHW9D12...", remember_digest: nil>, #<User id: 2, ...
+
+2. 先ほどの演習課題で取得したpaginationオブジェクトは、何クラスか？
+　 また、User.allのクラスとどこが違うか、比較してみる。
+ > page = User.paginate(page: nil)
+  .
+  .
+ > page.class
+ => User::ActiveRecord_Relation
+ 
+ > all = User.all
+  .
+  .
+ > all.class
+ => User::ActiveRecord_Relation 
