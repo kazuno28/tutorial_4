@@ -175,3 +175,10 @@
                                             admin: true }}
    assert_not @other_user.reload.admin?
  end
+ 
+
+<destroyアクション>
+[演習]
+1. 管理者ユーザーとしてログインし、試しにサンプルユーザを２〜３人削除してみる。
+　 ユーザーを削除すると、Railsサーバーのログにはどのような情報が表示されるか？
+ destroyが実行されデータベースから情報をdeleteした。
