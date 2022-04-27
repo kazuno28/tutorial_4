@@ -97,7 +97,7 @@
     assert_select "a[href=?]", logout_path
   end
  end
- 
+
 
 <サンプルのユーザー>
 [演習]
@@ -111,7 +111,7 @@
  > User.paginate(page: nil)
   User Load (0.2ms)  SELECT  "users".* FROM "users" LIMIT ? OFFSET ?  [["LIMIT", 11], ["OFFSET", 0]]
    (0.1ms)  SELECT COUNT(*) FROM "users"
- => #<ActiveRecord::Relation [#<User id: 1, name: "Example User", email: "example@railstutorial.org", created_at: "2022-04-13 02:08:37", 
+ => #<ActiveRecord::Relation [#<User id: 1, name: "Example User", email: "example@railstutorial.org", created_at: "2022-04-13 02:08:37",
  updated_at: "2022-04-13 02:08:37", password_digest: "$2a$10$3kLWGS5yW.W.owwAXwHiQuO8hICSBA06uqGWQHW9D12...", remember_digest: nil>, #<User id: 2, ...
 
 2. 先ほどの演習課題で取得したpaginationオブジェクトは、何クラスか？
@@ -121,13 +121,13 @@
   .
  > page.class
  => User::ActiveRecord_Relation
- 
+
  > all = User.all
   .
   .
  > all.class
- => User::ActiveRecord_Relation 
- 
+ => User::ActiveRecord_Relation
+
 
 <ユーザー一覧のテスト>
 [演習]
@@ -136,7 +136,7 @@
  コメントアウトしてテストするとredになった。
 
 2. 先ほどは２つともコメントアウトしたが、１つだけコメントアウトした場合、テストが greenのままであることを確認。
-   will_paginateのリンクが２つとも存在していることをテストしたい場合は、どのようなテストを追加すれば良いか? 
+   will_paginateのリンクが２つとも存在していることをテストしたい場合は、どのようなテストを追加すれば良いか?
    　ヒント: 表 5.2を参考にして、数をカウントするテストを追加してみる。
 
 
@@ -155,3 +155,23 @@
 
  <%= will_paginate %>
  テストすると、REDになった。
+
+
+[ユーザーを削除する]
+<管理ユーザー>
+[演習]
+1. Web経由でadmin属性を変更できないことを確認。具体的には、リスト 10.56に示したように、
+　 PATCHを直接ユーザーのURL (/users/:id) に送信するテストを作成してみる。
+ 　テストが正しい振る舞いをしているかどうか確信を得るために、まずはadminをuser_paramsメソッド内の
+ 　許可されたパラメータ一覧に追加するところから始めてみる。
+ 　最初のテストの結果は redになるはず。
+ [users_controller_test.rb]
+ test "shuld not allow the admin attribute to be edited via the web" do
+   log_in_as(@other_user)
+   assret_not @other_user.admin?
+   patch user_path(@other_user) , params: {
+                                    user: { password: @other_user.password,
+                                            password_confirmation: @other_user.password,
+                                            admin: true }}
+   assert_not @other_user.reload.admin?
+ end
