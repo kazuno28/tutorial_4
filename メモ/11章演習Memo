@@ -8,3 +8,36 @@
 2. 表 11.2の名前付きルートでは、_pathではなく_urlを使うように記してある。なぜか？
 　 　ヒント: 私達はこれからメールで名前付きルートを使う。
  メールからアクセスしてもらうのには完全なURLが必要なため。
+
+
+<AccountActivationのデータモデル>
+[演習]
+1. 本項での変更を加えた後、テストスイートが green のままになっていることを確認。
+ GREENのままだった。
+
+2. コンソールからUserクラスのインスタンスを生成し、そのオブジェクトからcreate_activation_digestメソッドを呼び出そうとすると
+   (Privateメソッドなので)NoMethodErrorが発生することを確認。
+   また、そのUserオブジェクトからダイジェストの値も確認。
+ Userクラスのインスタンス生成
+ > user = User.first
+ 
+ create_activation_digestメソッド呼び出し
+ > user.create_activation_digest
+ Traceback (most recent call last):
+         1: from (irb):2
+ NoMethodError (private method `create_activation_digest' called for #<User:0x000000000189f228>)
+ Did you mean?  restore_activation_digest!
+ 
+ ダイジェストの値を確認
+ > user.activation_digest
+ => "$2a$10$2e16YvBHYqI01S2dCpAgRuq3HXch7zdrnPO57q7rWYaPQgEubbRp6" 
+ 
+3. リスト 6.34で、メールアドレスの小文字化にはemail.downcase!という(代入せずに済む)メソッドがあることを知った。
+　 このメソッドを使って、リスト 11.3のdowncase_emailメソッドを改良してみる。
+　 また、うまく変更できれば、テストスイートは成功したままになっていることも確認。
+ [user.rb]
+ def downcase_email
+   email.downcase!
+ end
+ に変更。
+ テストもGREEN。
