@@ -20,18 +20,18 @@
    また、そのUserオブジェクトからダイジェストの値も確認。
  Userクラスのインスタンス生成
  > user = User.first
- 
+
  create_activation_digestメソッド呼び出し
  > user.create_activation_digest
  Traceback (most recent call last):
          1: from (irb):2
  NoMethodError (private method `create_activation_digest' called for #<User:0x000000000189f228>)
  Did you mean?  restore_activation_digest!
- 
+
  ダイジェストの値を確認
  > user.activation_digest
- => "$2a$10$2e16YvBHYqI01S2dCpAgRuq3HXch7zdrnPO57q7rWYaPQgEubbRp6" 
- 
+ => "$2a$10$2e16YvBHYqI01S2dCpAgRuq3HXch7zdrnPO57q7rWYaPQgEubbRp6"
+
 3. リスト 6.34で、メールアドレスの小文字化にはemail.downcase!という(代入せずに済む)メソッドがあることを知った。
 　 このメソッドを使って、リスト 11.3のdowncase_emailメソッドを改良してみる。
 　 また、うまく変更できれば、テストスイートは成功したままになっていることも確認。
@@ -41,3 +41,12 @@
  end
  に変更。
  テストもGREEN。
+
+
+[アカウント有効化のメール送信]
+<送信メールのテンプレート>
+[演習]
+1. コンソールを開き、CGIモジュールのescapeメソッド (リスト 11.15) でメールアドレスの文字列をエスケープできることを確認。
+   このメソッドで"Don't panic!"をエスケープすると、どんな結果になるか？
+ > CGI.escape("Don't panic!")
+ => "Don%27t+panic%21"
