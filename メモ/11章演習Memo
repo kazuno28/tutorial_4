@@ -84,3 +84,31 @@
   password_digest: "$2a$10$pm7eqE8fs7SaFhOlkIW3FeLPQKLvc1bBYmXOwnzCVQB...", remember_digest: nil, admin: false, 
   activation_digest: "$2a$10$UnqX4E6WUecQtSQst7kruefRB4NFnYhyxPywUywFYnQ...", activated: false, activated_at: nil>
  ユーザーは存在するが、activated: falseになっている。
+ 
+
+[アカウントを有効化する]
+<authenticated?メソッドの抽象化>
+[演習]
+1. コンソール内で新しいユーザーを作成してみる。新しいユーザーの記憶トークンと有効化トークンはどのような値になっているか？
+　 また、各トークンに対応するダイジェストの値はどうなっているか？
+ > user.remember_token
+ => nil 
+ 
+ > user.remember_digest
+ => nil 
+ 
+ > user.activation_token
+ => "dSlD7gQ1fe4H6Jw-kP-6-Q" 
+ 
+ > user.activation_digest
+ => "$2a$10$QYp9fFpOzajxZnw3dcc1.O8iD5iUgQ6eAA3I43fEFlokYA/M3i1OK" 
+
+2. リスト 11.26で抽象化したauthenticated?メソッドを使って、先ほどの各トークン/ダイジェストの組み合わせで認証が成功することを確認。
+ > user.remember
+ => true 
+ 
+ > user.authenticated?(:remember, user.remember_token)
+ => true 
+ 
+ > user.authenticated?(:activation, user.activation_token)
+ => true 
