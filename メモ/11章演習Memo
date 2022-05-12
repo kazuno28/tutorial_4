@@ -112,3 +112,14 @@
  
  > user.authenticated?(:activation, user.activation_token)
  => true 
+
+
+<editアクションで有効化>
+[演習]
+1. コンソールから、11.2.4で生成したメールに含まれているURLを調べてみてください。URL内のどこに有効化トークンが含まれているか？
+ https://rails-tutorial-mhartl.c9users.io/     この部分→    account_activations/FvTkXWNqmawfvHryiXgl4g            /edit?email=abc%40gmail.com
+
+2. 先ほど見つけたURLをブラウザに貼り付けて、そのユーザーの認証に成功し、有効化できることを確認。
+　 また、有効化ステータスがtrueになっていることをコンソールから確認。
+ > user.activated
+ => true
