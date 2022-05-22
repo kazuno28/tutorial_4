@@ -30,3 +30,13 @@ PasswordResetsリソースを作成して、再設定用のトークンとそれ
 1. リスト 12.4のform_forメソッドでは、なぜ@password_resetではなく:password_resetを使っているのか？
  password_resetはUserモデルに変更を加えるコントローラのためインスタンス変数を使う場合@userになるが、
  form_forに@userを使うと/usersに対応するPOSTであると認識されるのでsignupに対応してから:password_resetを使用している。
+ 
+
+<createアクションでパスワード再設定>
+[演習]
+1. 試しに有効なメールアドレスをフォームから送信してみましょう (図 12.6)。どんなエラーメッセージが表示されたか？
+ wrong number of aruments (given 1,expected 0)
+
+2. コンソールに移り、先ほどの演習課題で送信した結果、該当するuserオブジェクトにはreset_digestとreset_sent_atがあることを確認。
+ 　また、それぞれの値はどのようになっているか？
+ ブラウザではエラーとなっているがコンソールで確認するとそれぞれ値が入力されている
