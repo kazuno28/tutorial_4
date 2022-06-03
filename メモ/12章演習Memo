@@ -47,6 +47,17 @@ PasswordResetsリソースを作成して、再設定用のトークンとそれ
 [演習]
 1. ブラウザから、送信メールのプレビューをしてみる。「Date」の欄にはどんな情報が表示されているか?
  Dateの欄にはUTC時間が表示される。
+ 
+2. パスワード再設定フォームから有効なメールアドレスを送信してみる。また、Railsサーバーのログを見て、生成された送信メールの内容を確認。
+ 
+
+3. コンソールに移り、先ほどの演習課題でパスワード再設定をしたUserオブジェクトを探す。
+　 オブジェクトを見つけたら、そのオブジェクトが持つreset_digestとreset_sent_atの値を確認。
+ >> user.reset_digest
+ => "$2a$10$fqmrs.nZER5KznyyjYht4uI3otro3Zqxklj6EMlegSWKXlLCnN2.G"
+ 
+ >> user.reset_sent_at
+ => , 03 Jun 2022 11:27:52 UTC +00:00
 
 
 <送信メールのテスト>
