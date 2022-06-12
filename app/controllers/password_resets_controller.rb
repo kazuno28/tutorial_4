@@ -28,6 +28,7 @@ class PasswordResetsController < ApplicationController
       render 'edit'
     elsif @user.update_attributes(user_params)          # (4) への対応
       log_in @user
+      @user.update_attribute(:reset_digest, nil)
       flash[:success] = "Password has been reset."
       redirect_to @user
     else
@@ -49,8 +50,7 @@ class PasswordResetsController < ApplicationController
 
     # 有効なユーザーかどうか確認する
     def valid_user
-      unless (@user && @user.activated? &&
-              @user.authenticated?(:reset, params[:id]))
+      unless (@user && @user.activated? && @user.authenticated?(:reset, params[:id]))
         redirect_to root_url
       end
     end
