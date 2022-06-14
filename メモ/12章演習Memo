@@ -171,3 +171,48 @@ AccountActivationsコントローラのeditアクションでは、ユーザー�
 　　ヒント: リスト9.25のassert_nilメソッドとリスト11.33のuser.reloadメソッドを組み合わせて、reset_digest属性を直接テストしてみる。
  [password_resets_test.rb]の　test "password resets" do　に、
  assert_nil user.reload.reset_digest　を追加。
+ 
+
+[本番環境でのメール送信]
+本番環境からメール送信するために、「Mailgun」というHerokuアドオンを利用してアカウントを検証します
+(このアドオンを利用するためにはHerokuアカウントにクレジットカードを設定する必要がありますが、アカウント検証では料金は発生しません)。
+本チュートリアルでは、「starter」というプランを使うことにします。これは1日のメール数が最大400通までという制限がありますが、
+無料で利用することができます。
+
+アプリケーションでMailgunアドオンを使うには、production環境のSMTPに情報を記入する必要があります。
+リスト12.23に示したとおり、本番Webサイトのアドレスをhost変数に定義する必要もあります。
+<あなたのHerokuサブドメイン名>を自分のHerokuのURLに設定してください。その他の設定はこのまま使えます。
+
+ <Railsのproduction環境でMailgunを使う設定>
+   [config/environments/production.rb]
+   Rails.application.configure do
+    .
+    .
+    .
+    config.action_mailer.raise_delivery_errors = true
+    config.action_mailer.delivery_method = :smtp
+    host = '<あなたのHerokuサブドメイン名>.herokuapp.com'
+    config.action_mailer.default_url_options = { host: host }
+    ActionMailer::Base.smtp_settings = {
+      :port           => ENV['MAILGUN_SMTP_PORT'],
+      :address        => ENV['MAILGUN_SMTP_SERVER'],
+      :user_name      => ENV['MAILGUN_SMTP_LOGIN'],
+      :password       => ENV['MAILGUN_SMTP_PASSWORD'],
+      :domain         => host,
+      :authentication => :plain,
+     }
+    .
+    . 
+    .
+   end
+   
+リスト11.41のメール設定にはMailgunアカウントのuser_nameとpassword設定を記入する行もありますが、そこには記入せず、
+必ず環境変数「ENV」に設定するよう十分ご注意ください。
+
+本番運用するアプリケーションでは、暗号化されていないIDやパスワードのような重要なセキュリティ情報は
+「絶対に」ソースコードに直接書き込まないでください。
+
+そのような情報は環境変数に記述し、そこからアプリケーションに読み込む必要があります。
+今回の場合、そうした変数はMailgunアドオンが自動的に設定してくれますが、13.4.4では環境変数を自分で設定しなければなりません。
+
+最後に、受信メールの認証を行います。以下のコマンドを打つと、Mailgun ダッシュボードのURLが表示されるのでブラウザで開きます。
