@@ -1,0 +1,62 @@
+ユーザーのマイクロポスト
+
+[Micropostモデル]
+<基本的なモデル>
+Micropostモデルは、マイクロポストの内容を保存するcontent属性と、特定のユーザーとマイクロポストを関連付けるuser_id属性の2つの属性だけを持つ。
+
+   Microposts
+id           integer
+content      text
+user_id      integer
+created_at   datetime
+updated_at   datetime
+
+マイクロポストの投稿にString型ではなくText型を使っている点に注。これは、ある程度の量のテキストを格納するときに使われる型。
+String型でも255文字までは格納できるため、この型でも13.1.2で実装する140文字制限を満たせるが、Text型の方が表現豊かなマイクロポストを実現できる。
+
+例えば、13.3.2では投稿フォームにString用のテキストフィールドではなくてText用のテキストエリアを使うため、より自然な投稿フォームが実現できる。
+また、Text型の方が将来における柔軟性に富んでいて、例えばいつか国際化をするときに、言語に応じて投稿の長さを調節することもできる。
+さらに、Text型を使っていても本番環境でパフォーマンスの差は出ない。これらの理由から、デメリットよりもメリットの方が多いので、今回はText型を採用している。
+
+[演習]
+1. RailsコンソールでMicropost.newを実行し、インスタンスを変数micropostに代入する。
+　 その後、user_idに最初のユーザーのidを、contentに "Lorem ipsum" をそれぞれ代入してみる。
+　 この時点では、 micropostオブジェクトのマジックカラム (created_atとupdated_at) には何が入っているでしょうか?
+ > micropost = Micropost.new
+ => #<Micropost id: nil, content: nil, user_id: nil, created_at: nil, updated_at: nil> 
+ 
+ > user = User.first
+ 
+ > micropost.user_id = user.id
+ => 1 
+ 
+ > micropost.content = "Lorem ipsum"
+ => "Lorem ipsum" 
+ 
+ > micropost.created_at
+ => nil 
+ 
+2. 先ほど作ったオブジェクトを使って、micropost.userを実行してみるとどのような結果が返ってくるでしょうか? 
+　 また、micropost.user.nameを実行した場合の結果はどうなるでしょうか?
+ > micropost.user
+  User Load (0.2ms)  SELECT  "users".* FROM "users" WHERE "users"."id" = ? LIMIT ?  [["id", 1], ["LIMIT", 1]]
+  => #<User id: 1, name: "Example User", email: "example@railstutorial.org", created_at: "2022-05-01 07:24:15", updated_at: "2022-05-01 07:24:15", 
+  password_digest: "$2a$10$PniTSH6lw/3p/7CpdEXOLOzn7Nkg7PsEvnEVpPzkfR/...", remember_digest: nil, admin: true, 
+  activation_digest: "$2a$10$2e16YvBHYqI01S2dCpAgRuq3HXch7zdrnPO57q7rWYa...", activated: true, activated_at: "2022-05-01 07:24:14", reset_digest: nil, reset_sent_at: nil> 
+  
+ > micropost.user.name
+ => "Example User" 
+ 
+3. 先ほど作ったmicropostオブジェクトをデータベースに保存してみる。この時点でもう一度マジックカラムの内容を調べてみましょう。今度はどのような値が入っているでしょうか?
+ > micropost.save
+   (0.1ms)  begin transaction
+  Micropost Create (2.5ms)  INSERT INTO "microposts" ("content", "user_id", "created_at", "updated_at") VALUES (?, ?, ?, ?)  [["content", "Lorem ipsum"], ["user_id", 1], 
+  ["created_at", "2022-06-16 02:02:24.615745"], ["updated_at", "2022-06-16 02:02:24.615745"]]
+   (7.7ms)  commit transaction
+ => true 
+ 
+ > micropost.created_at
+ => Thu, 16 Jun 2022 02:02:24 UTC +00:00 
+ 
+ > micropost.updated_at
+ => Thu, 16 Jun 2022 02:02:24 UTC +00:00 
