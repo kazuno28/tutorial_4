@@ -60,3 +60,28 @@ String型でも255文字までは格納できるため、この型でも13.1.2�
  
  > micropost.updated_at
  => Thu, 16 Jun 2022 02:02:24 UTC +00:00 
+ 
+
+<Micropostのバリデーション>
+[演習]
+1. Railsコンソールを開き、user_idとcontentが空になっているmicropostオブジェクトを作ってみる。
+　 このオブジェクトに対してvalid?を実行すると、失敗することを確認。また、生成されたエラーメッセージにはどんな内容が書かれているか?
+ >  micropost = Micropost.new
+ => #<Micropost id: nil, content: nil, user_id: nil, created_at: nil, updated_at: nil> 
+ 
+ > micropost.valid?
+ => false 
+ 
+ > micropost.errors.full_messages
+ => ["User must exist", "Content can't be blank"] 
+ 
+2. コンソールを開き、今度はuser_idが空でcontentが141文字以上のmicropostオブジェクトを作ってみる。
+　 このオブジェクトに対してvalid?を実行すると、失敗することを確認。また、生成されたエラーメッセージにはどんな内容が書かれているか?
+ > micropost = Micropost.new(content: "a" * 141)
+ => #<Micropost id: nil, content: "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa...", user_id: nil, created_at: nil, updated_at: nil> 
+ 
+ > micropost.valid?
+ => false 
+ 
+ > micropost.errors.full_messages
+ => ["User must exist", "Content is too long (maximum is 140 characters)"] 
