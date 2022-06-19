@@ -85,3 +85,36 @@ String型でも255文字までは格納できるため、この型でも13.1.2�
  
  > micropost.errors.full_messages
  => ["User must exist", "Content is too long (maximum is 140 characters)"] 
+
+
+<User/Micropostの関連付け>
+[演習]
+1. データベースにいる最初のユーザーを変数userに代入。そのuserオブジェクトを使ってmicropost = user.microposts.create(content: "Lorem ipsum")
+ 　を実行すると、どのような結果が得られるか?
+ > user = User.first
+ 
+ > micropost = user.microposts.create(content: "Lorem ipsum")
+   (0.1ms)  begin transaction
+  Micropost Create (5.2ms)  INSERT INTO "microposts" ("content", "user_id", "created_at", "updated_at") VALUES (?, ?, ?, ?)  [["content", "Lorem ipsum"], 
+  ["user_id", 1], ["created_at", "2022-06-19 01:08:27.285764"], ["updated_at", "2022-06-19 01:08:27.285764"]]
+   (6.4ms)  commit transaction
+ => #<Micropost id: 2, content: "Lorem ipsum", user_id: 1, created_at: "2022-06-19 01:08:27", updated_at: "2022-06-19 01:08:27"> 
+ 
+2. 先の演習課題で、データベース上に新しいマイクロポストが追加されたはず。user.microposts.find(micropost.id)を実行して、本当に追加されたのかを確認。
+　 また、先ほど実行したmicropost.idの部分をmicropostに変更すると、結果はどうなるか?
+ > user.microposts.find(micropost.id)
+  Micropost Load (0.2ms)  SELECT  "microposts".* FROM "microposts" WHERE "microposts"."user_id" = ? AND "microposts"."id" = ? LIMIT ?  [["user_id", 1], ["id", 2], ["LIMIT", 1]]
+ => #<Micropost id: 2, content: "Lorem ipsum", user_id: 1, created_at: "2022-06-19 01:08:27", updated_at: "2022-06-19 01:08:27">
+ 
+ > user.microposts.find(micropost)
+ Traceback (most recent call last):
+         1: from (irb):4
+ ArgumentError (You are passing an instance of ActiveRecord::Base to `find`. Please pass the id of the object by calling `.id`.)
+ 
+3. user == micropost.userを実行した結果はどうなるか? また、user.microposts.first == micropost を実行した結果はどうなるか? それぞれ確認。
+ > user == micropost.user
+ => true 
+ 
+ > user.microposts.first == micropost
+  Micropost Load (0.2ms)  SELECT  "microposts".* FROM "microposts" WHERE "microposts"."user_id" = ? ORDER BY "microposts"."id" ASC LIMIT ?  [["user_id", 1], ["LIMIT", 1]]
+ => false 
