@@ -118,3 +118,45 @@ String型でも255文字までは格納できるため、この型でも13.1.2�
  > user.microposts.first == micropost
   Micropost Load (0.2ms)  SELECT  "microposts".* FROM "microposts" WHERE "microposts"."user_id" = ? ORDER BY "microposts"."id" ASC LIMIT ?  [["user_id", 1], ["LIMIT", 1]]
  => false 
+ 
+ 
+<マイクロポストの改良>
+ユーザーのマイクロポストを特定の順序で取得できるようにしたり、マイクロポストをユーザーに依存させて、
+ユーザーが削除されたらマイクロポストも自動的に削除されるようにしていく。
+
+[演習]
+1. Micropost.first.created_atの実行結果と、Micropost.last.created_atの実行結果を比べてみる。
+ > Micropost.first.created_at
+  Micropost Load (0.9ms)  SELECT  "microposts".* FROM "microposts" ORDER BY "microposts"."created_at" DESC LIMIT ?  [["LIMIT", 1]]
+ => Sun, 19 Jun 2022 01:08:27 UTC +00:00 
+ 
+ > Micropost.last.created_at
+  Micropost Load (0.2ms)  SELECT  "microposts".* FROM "microposts" ORDER BY "microposts"."created_at" ASC LIMIT ?  [["LIMIT", 1]]
+ => Thu, 16 Jun 2022 02:02:24 UTC +00:00 
+
+2. Micropost.firstを実行したときに発行されるSQL文はどうなっているか? 同様にして、Micropost.lastの場合はどうなっているか? 
+     ヒント: それぞれをコンソール上で実行したときに表示される文字列が、SQL文になります。
+ > Micropost.first
+  Micropost Load (0.2ms)  SELECT  "microposts".* FROM "microposts" ORDER BY "microposts"."created_at" DESC LIMIT ?  [["LIMIT", 1]]
+ => #<Micropost id: 2, content: "Lorem ipsum", user_id: 1, created_at: "2022-06-19 01:08:27", updated_at: "2022-06-19 01:08:27"> 
+ 
+ > Micropost.last
+  Micropost Load (0.2ms)  SELECT  "microposts".* FROM "microposts" ORDER BY "microposts"."created_at" ASC LIMIT ?  [["LIMIT", 1]]
+ => #<Micropost id: 1, content: "Lorem ipsum", user_id: 1, created_at: "2022-06-16 02:02:24", updated_at: "2022-06-16 02:02:24"> 
+ 
+3. データベース上の最初のユーザーを変数userに代入する。そのuserオブジェクトが最初に投稿したマイクロポストのidはいくつか? 
+　 次に、destroyメソッドを使ってそのuserオブジェクトを削除してみる。削除すると、そのuserに紐付いていたマイクロポストも
+　 削除されていることをMicropost.findで確認。
+ > user = User.first
+ 
+ > user.microposts.first
+ 
+ > user.destroy
+ 
+ > Micropost.find(1)
+  Micropost Load (0.2ms)  SELECT  "microposts".* FROM "microposts" WHERE "microposts"."id" = ? ORDER BY "microposts"."created_at" DESC LIMIT ?  [["id", 1], ["LIMIT", 1]]
+  Traceback (most recent call last):
+         2: from (irb):9
+         1: from (irb):9:in `rescue in irb_binding'
+  ActiveRecord::RecordNotFound (Couldn't find Micropost with 'id'=1)
+  
