@@ -159,4 +159,30 @@ String型でも255文字までは格納できるため、この型でも13.1.2�
          2: from (irb):9
          1: from (irb):9:in `rescue in irb_binding'
   ActiveRecord::RecordNotFound (Couldn't find Micropost with 'id'=1)
-  
+
+
+[マイクロポストを表示する]
+<マイクロポストの描画>
+[演習]
+1. 7.3.3で軽く説明したように、今回ヘルパーメソッドとして使ったtime_ago_in_wordsメソッドは、Railsコンソールのhelperオブジェクトから
+　 呼び出すことができる。このhelperオブジェクトのtime_ago_in_wordsメソッドを使って、3.weeks.agoや6.months.agoを実行してみる。
+ > helper.time_ago_in_words(3.weeks.ago)
+ => "21 days" 
+ 
+ > helper.time_ago_in_words(6.month.ago)
+ => "6 months" 
+ 
+2. helper.time_ago_in_words(1.year.ago)と実行すると、どういった結果が返ってくるか?
+ > helper.time_ago_in_words(1.year.ago)
+ => "about 1 year" 
+ 
+3. micropostsオブジェクトのクラスは何か? 
+    ヒント: リスト13.23内のコードにあるように、まずはpaginateメソッド(引数はpage: nil)でオブジェクトを取得し、その後classメソッドを呼び出してみる。
+ > user = User.find(1)
+ 
+ > microposts = user.microposts.paginate(page: nil)
+  Micropost Load (0.1ms)  SELECT  "microposts".* FROM "microposts" WHERE "microposts"."user_id" = ? ORDER BY "microposts"."created_at" DESC LIMIT ? OFFSET ?  [["user_id", 1], ["LIMIT", 11], ["OFFSET", 0]]
+ => #<ActiveRecord::AssociationRelation []> 
+ 
+ > microposts.class
+ => Micropost::ActiveRecord_AssociationRelation 
