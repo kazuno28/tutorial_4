@@ -213,3 +213,23 @@ String型でも255文字までは格納できるため、この型でも13.1.2�
  
  > Faker::ChuckNorris.fact
  => "For Chuck Norris, NP-Hard = O(1)." 
+ 
+ 
+<プロフィール画面のマイクロポストをテストする>
+[演習]
+1. リスト13.28にある２つの'h1'のテストが正しいか確かめるため、該当するアプリケーション側のコードをコメントアウトしてみる。
+　 テストが green から redに変わることを確認。
+ <% provide(:title, @user.name) %>
+ <div class="row">
+   <aside class="col-md-4">
+     <section class="user_info">
+       <h1>
+         <%= #gravatar_for @user %>
+         <%= @user.name %>
+       </h1>
+ にすると、REDになった。 
+
+2. リスト13.28にあるテストを変更して、will_paginateが１度のみ表示されていることをテストしてみる。
+　　　ヒント: 表 5.2を参考にしてください。
+ [users_profile_test.rb]
+ assert_select 'div.pagination', count: 1　を追加する。
