@@ -240,3 +240,38 @@ String型でも255文字までは格納できるため、この型でも13.1.2�
 [演習]
 1. なぜUsersコントローラ内にあるlogged_in_userフィルターを残したままにするとマズイのか? 考えてみる。
  無駄なコードが増えてエラーの原因になるから。
+ 
+
+<マイクロポストを作成する>
+[演習]
+1. Homeページをリファクタリングして、if-else文の分岐のそれぞれに対してパーシャルを作ってみる。
+ [app/views/static_pages/home.html.erb]
+　<% if logged_in? %>
+  　<%= render 'static_pages/home_logged_in' %>
+　<% else %>
+  　<%= render 'static_pages/home_not_logged_in' %>
+　<% end %>
+
+[app/views/static_pages/_home_lodgged_in.html.erb]
+<div class="row">
+  <aside class="col-md-4">
+    <section class="user_info">
+      <%= render 'shared/user_info' %>
+    </section>
+    <section class="micropost_form">
+      <%= render 'shared/micropost_form' %>
+    </section>
+  </aside>
+</div>
+
+[app/views/static_pages/_home_not_logged_in.html.erb]
+<div class="center jumbotron">
+  <h1>Welcom to the  Sample App</h1>
+  <h2>
+    This is the home page for the
+    <a href="https://railstutorial.jp/">Ruby on Rails Tutorial</a>
+    sample application.
+  </h2>
+  <%= link_to "Sign up now!", signup_path, class: "btn btn-lg btn-primary" %>
+</div>
+<%= link_to image_tag("rails.png", alt: "Rails logo"), 'http://rubyonrails.org/' %>
