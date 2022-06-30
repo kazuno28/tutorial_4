@@ -275,3 +275,28 @@ String型でも255文字までは格納できるため、この型でも13.1.2�
   <%= link_to "Sign up now!", signup_path, class: "btn btn-lg btn-primary" %>
 </div>
 <%= link_to image_tag("rails.png", alt: "Rails logo"), 'http://rubyonrails.org/' %>
+
+
+<フィードの原型>
+[演習]
+1. 新しく実装したマイクロポストの投稿フォームを使って、実際にマイクロポストを投稿してみる。
+　 Railsサーバーのログ内にあるINSERT文では、どういった内容をデータベースに送っているか? 確認してみる。
+ (0.1ms)  begin transaction
+  ↳ app/controllers/microposts_controller.rb:6
+  Micropost Create (1.7ms)  INSERT INTO "microposts" ("content", "user_id", "created_at", "updated_at") VALUES (?, ?, ?, ?)  [["content", "aaa"], ["user_id", 101], ["created_at", "2022-06-27 11:13:22.300737"], ["updated_at", "2022-06-27 11:13:22.300737"]]
+  ↳ app/controllers/microposts_controller.rb:6
+ (5.9ms)  commit transaction
+ 
+2. コンソールを開き、user変数にデータベース上の最後のユーザーを代入してみる。
+　 その後、Micropost.where("user_id = ?", user.id)とuser.microposts、そしてuser.feedをそれぞれ実行してみて、実行結果がすべて同じであることを確認。
+     ヒント: ==で比較すると結果が同じかどうか簡単に判別できます。
+ > user = User.last
+ 
+ > Micropost.where("user_id = ?", user.id) == user.microposts 
+  Micropost Load (0.2ms)  SELECT "microposts".* FROM "microposts" WHERE "microposts"."user_id" = ? ORDER BY "microposts"."created_at" DESC  [["user_id", 101]]
+  Micropost Load (0.1ms)  SELECT "microposts".* FROM "microposts" WHERE (user_id = 101) ORDER BY "microposts"."created_at" DESC
+ => true 
+ 
+ > user.microposts == user.feed
+  Micropost Load (0.2ms)  SELECT "microposts".* FROM "microposts" WHERE (user_id = 101) ORDER BY "microposts"."created_at" DESC
+ => true 
