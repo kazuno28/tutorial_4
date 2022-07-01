@@ -300,3 +300,12 @@ String型でも255文字までは格納できるため、この型でも13.1.2�
  > user.microposts == user.feed
   Micropost Load (0.2ms)  SELECT "microposts".* FROM "microposts" WHERE (user_id = 101) ORDER BY "microposts"."created_at" DESC
  => true 
+ 
+
+<マイクロポストを削除する>
+[演習]
+1. マイクロポストを作成し、その後、作成したマイクロポストを削除してみる。次に、Railsサーバーのログを見てみて、DELETE文の内容を確認。
+ Micropost Destroy (0.7ms)  DELETE FROM "microposts" WHERE "microposts"."id" = ?  [["id", 301]]
+
+2. redirect_to request.referrer || root_urlの行をredirect_back(fallback_location: root_url)と置き換えてもうまく動くことを、ブラウザを使って確認(このメソッドはRails 5から新たに導入されました)。
+ 問題なく動いた
