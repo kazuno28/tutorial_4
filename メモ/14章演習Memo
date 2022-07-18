@@ -10,3 +10,24 @@
 2. 図 14.7を参考にして、id=2のユーザーに対してuser.followingを実行すると、結果はどのようになるか? 
    また、同じユーザーに対してuser.following.map(&:id)を実行すると、結果はどのようになるか? 想像してみてください。
  id=2にフォローされているユーザー（id: 1）を返す
+ 
+
+<User/Relationshipの関連付け>
+[演習]
+1. コンソールを開き、表 14.1のcreateメソッドを使ってActiveRelationshipを作ってみる。
+　 データベース上に２人以上のユーザーを用意し、最初のユーザーが２人目のユーザーをフォローしている状態を作ってみる。
+ > user = User.first
+ 
+ > user2 = User.second
+ 
+ > user.active_relationships.create(followed_id: user2.id)
+   (0.1ms)  begin transaction
+  User Load (0.2ms)  SELECT  "users".* FROM "users" WHERE "users"."id" = ? LIMIT ?  [["id", 1], ["LIMIT", 1]]
+  User Load (0.1ms)  SELECT  "users".* FROM "users" WHERE "users"."id" = ? LIMIT ?  [["id", 2], ["LIMIT", 1]]
+  Relationship Create (4.7ms)  INSERT INTO "relationships" ("follower_id", "followed_id", "created_at", "updated_at") VALUES (?, ?, ?, ?)  [["follower_id", 1], ["followed_id", 2], ["created_at", "2022-07-15 03:26:06.183624"], ["updated_at", "2022-07-15 03:26:06.183624"]]
+   (6.3ms)  commit transaction
+ => #<Relationship id: 1, follower_id: 1, followed_id: 2, created_at: "2022-07-15 03:26:06", updated_at: "2022-07-15 03:26:06"> 
+ 
+2. 先ほどの演習を終えたら、active_relationship.followedの値とactive_relationship.followerの値を確認し、それぞれの値が正しいことを確認。
+ => #<Relationship id: 1, follower_id: 1, followed_id: 2, created_at: "2022-07-15 03:26:06", updated_at: "2022-07-15 03:26:06"> 
+
