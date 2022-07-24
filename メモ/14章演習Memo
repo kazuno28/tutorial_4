@@ -37,3 +37,42 @@
 1. リスト14.5のバリデーションをコメントアウトしても、テストが成功したままになっていることを確認。
 　 (以前のRailsのバージョンでは、このバリデーションが必須だったが、Rails5から必須ではなくなった。今回はフォロー機能の実装を優先するが、この手のバリデーションが省略されている可能性があることを頭の片隅で覚えておく。)
  コメントアウトしても、テストが成功した。
+ 
+
+<フォローしているユーザー>
+[演習]
+1. コンソールを開き、リスト 14.9のコードを順々に実行してみましょう。
+ > michael = User.third
+ 
+ > archer = User.fourth
+ 
+ > michael.following?(archer)
+  User Exists (0.9ms)  SELECT  1 AS one FROM "users" INNER JOIN "relationships" ON "users"."id" = "relationships"."followed_id" WHERE "relationships"."follower_id" = ? AND "users"."id" = ? LIMIT ?  [["follower_id", 3], ["id", 4], ["LIMIT", 1]]
+ => false 
+ 
+ > michael.follow(archer)
+   (0.1ms)  begin transaction
+  User Load (0.1ms)  SELECT  "users".* FROM "users" WHERE "users"."id" = ? LIMIT ?  [["id", 3], ["LIMIT", 1]]
+  Relationship Create (4.5ms)  INSERT INTO "relationships" ("follower_id", "followed_id", "created_at", "updated_at") VALUES (?, ?, ?, ?)  [["follower_id", 3], ["followed_id", 4], ["created_at", "2022-07-21 14:15:33.888750"], ["updated_at", "2022-07-21 14:15:33.888750"]]
+   (8.5ms)  commit transaction
+  User Load (0.2ms)  SELECT  "users".* FROM "users" INNER JOIN "relationships" ON "users"."id" = "relationships"."followed_id" WHERE "relationships"."follower_id" = ? LIMIT ?  [["follower_id", 3], ["LIMIT", 11]]
+ => #<ActiveRecord::Associations::CollectionProxy [#<User id: 4, name: "Emely Borer", email: "example-3@railstutorial.org", created_at: "2022-06-22 13:11:20", updated_at: "2022-06-22 13:11:20", password_digest: "$2a$10$DYtjeCTsi3EthExSosUx/O/kttL70R/YZ1HmGm5tYMA...", 
+ remember_digest: nil, admin: false, activation_digest: "$2a$10$hSNA1VYEc6W5xMFtNZZFYupMO.p3qyxJtT148TkfWcV...", activated: true, activated_at: "2022-06-22 13:11:20", reset_digest: nil, reset_sent_at: nil>]> 
+ 
+ > michael.following?(archer)
+  User Exists (0.2ms)  SELECT  1 AS one FROM "users" INNER JOIN "relationships" ON "users"."id" = "relationships"."followed_id" WHERE "relationships"."follower_id" = ? AND "users"."id" = ? LIMIT ?  [["follower_id", 3], ["id", 4], ["LIMIT", 1]]
+ => true 
+ 
+ > michael.unfollow(archer)
+  Relationship Load (0.2ms)  SELECT  "relationships".* FROM "relationships" WHERE "relationships"."follower_id" = ? AND "relationships"."followed_id" = ? LIMIT ?  [["follower_id", 3], ["followed_id", 4], ["LIMIT", 1]]
+   (0.0ms)  begin transaction
+  Relationship Destroy (1.8ms)  DELETE FROM "relationships" WHERE "relationships"."id" = ?  [["id", 2]]
+   (6.2ms)  commit transaction
+ => #<Relationship id: 2, follower_id: 3, followed_id: 4, created_at: "2022-07-21 14:15:33", updated_at: "2022-07-21 14:15:33"> 
+ 
+ > michael.following?(archer)
+  User Exists (0.2ms)  SELECT  1 AS one FROM "users" INNER JOIN "relationships" ON "users"."id" = "relationships"."followed_id" WHERE "relationships"."follower_id" = ? AND "users"."id" = ? LIMIT ?  [["follower_id", 3], ["id", 4], ["LIMIT", 1]]
+ => false 
+
+2. 先ほどの演習の各コマンド実行時の結果を見返してみて、実際にはどんなSQLが出力されたのか確認してみましょう。
+ 
