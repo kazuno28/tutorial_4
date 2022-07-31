@@ -79,3 +79,34 @@
 
 
 <フォロワー>
+[演習]
+1. コンソールを開き、何人かのユーザーが最初のユーザーをフォローしている状況を作ってみる。
+　 最初のユーザーをuserとすると、user.followers.map(&:id)の値はどのようになっているか?
+ > user = User.first
+
+ > user2 = User.second
+ 
+ > user3 = User.third
+ 
+ > user4 = User.fourth
+
+ > user2.follow(user)
+
+ > user3.follow(user)
+
+ > user4.follow(user)
+
+ > user.followers.map(&:id)
+   User Load (0.3ms)  SELECT "users".* FROM "users" INNER JOIN "relationships" ON "users"."id" = "relationships"."follower_id" WHERE "relationships"."followed_id" = ?  [["followed_id", 1]]
+ => [2, 3, 4]
+
+2. 上の演習が終わったら、user.followers.countの実行結果が、先ほどフォローさせたユーザー数と一致していることを確認。
+ > user.followers.count
+   (0.2ms)  SELECT COUNT(*) FROM "users" INNER JOIN "relationships" ON "users"."id" = "relationships"."follower_id" WHERE "relationships"."followed_id" = ?  [["followed_id", 1]]
+ => 3 
+ 
+3. user.followers.countを実行した結果、出力されるSQL文はどのような内容になっているか? また、user.followers.to_a.countの実行結果と違っている箇所はあるか? 
+     ヒント: もしuserに100万人のフォロワーがいた場合、どのような違いがあるでしょうか? 考えてみてください。
+ 実行結果にsql文が出力されない。
+ 100万人のフォロワーがいたとすると、user.followers.countの場合、DB内でfollowersの合計を算出し返す。
+ user.followers.to_a.countの場合、DBから100万回データを取り出し配列を生成しその数の合計を返す。
