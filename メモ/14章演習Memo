@@ -110,3 +110,7 @@
  実行結果にsql文が出力されない。
  100万人のフォロワーがいたとすると、user.followers.countの場合、DB内でfollowersの合計を算出し返す。
  user.followers.to_a.countの場合、DBから100万回データを取り出し配列を生成しその数の合計を返す。
+ 
+
+[[Follow]のWebインターフェイス]
+<フォローのサンプルデータ>
