@@ -110,3 +110,19 @@
  実行結果にsql文が出力されない。
  100万人のフォロワーがいたとすると、user.followers.countの場合、DB内でfollowersの合計を算出し返す。
  user.followers.to_a.countの場合、DBから100万回データを取り出し配列を生成しその数の合計を返す。
+ 
+
+[[Follow]のWebインターフェイス]
+<フォローのサンプルデータ>
+[演習]
+1. コンソールを開き、User.first.followers.countの結果がリスト 14.14で期待している結果と合致していることを確認。
+ > User.first.followers.count
+  User Load (0.9ms)  SELECT  "users".* FROM "users" ORDER BY "users"."id" ASC LIMIT ?  [["LIMIT", 1]]
+   (0.9ms)  SELECT COUNT(*) FROM "users" INNER JOIN "relationships" ON "users"."id" = "relationships"."follower_id" WHERE "relationships"."followed_id" = ?  [["followed_id", 1]]
+ => 38 
+
+2. 先ほどの演習と同様に、User.first.following.countの結果も合致していることを確認。
+ > User.first.following.count
+  User Load (0.2ms)  SELECT  "users".* FROM "users" ORDER BY "users"."id" ASC LIMIT ?  [["LIMIT", 1]]
+   (0.2ms)  SELECT COUNT(*) FROM "users" INNER JOIN "relationships" ON "users"."id" = "relationships"."followed_id" WHERE "relationships"."follower_id" = ?  [["follower_id", 1]]
+ => 49 
